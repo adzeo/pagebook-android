@@ -156,13 +156,13 @@ public class EditBusinessPageActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {
                     Toast.makeText(EditBusinessPageActivity.this, "Business Page Modified", Toast.LENGTH_SHORT).show();
-                    BusinessProfile businessProfile = response.body();
+                    BusinessProfile savedBusinessProfile = response.body();
 
-                    initChangeInSearchApi();
+                    initChangeInSearchApi(savedBusinessProfile);
 
                     //re-directing to PbMAinActivity for user feeds
                     Intent intent = new Intent(EditBusinessPageActivity.this, BusinessProfilePageActivity.class);
-                    intent.putExtra("businessProfileId", businessProfile.getId());
+                    intent.putExtra("businessProfileId", savedBusinessProfile.getId());
                     startActivity(intent);
                     finish();
                 }
@@ -175,12 +175,12 @@ public class EditBusinessPageActivity extends AppCompatActivity {
         });
     }
 
-    private void initChangeInSearchApi() {
+    private void initChangeInSearchApi(BusinessProfile savedBusinessProfile) {
 
         //api call to for adding in the Search Service
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IRegisterBusinessApi iRegisterBusinessInSearchApi = retrofit.create(IRegisterBusinessApi.class);
-        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessInSearchApi.changeBusinessInSearch(businessProfile, businessProfile.getId());
+        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessInSearchApi.changeBusinessInSearch(savedBusinessProfile, savedBusinessProfile.getId());
         registerSearchResponse.enqueue(new Callback<BusinessProfile>() {
             @Override
             public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {

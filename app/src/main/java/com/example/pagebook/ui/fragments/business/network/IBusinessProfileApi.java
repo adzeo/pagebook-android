@@ -2,7 +2,7 @@ package com.example.pagebook.ui.fragments.business.network;
 
 import com.example.pagebook.models.BusinessDTO;
 import com.example.pagebook.models.BusinessProfile;
-import com.example.pagebook.models.Comments;
+import com.example.pagebook.models.Comment;
 import com.example.pagebook.models.Followers;
 import com.example.pagebook.models.Moderators;
 import com.example.pagebook.models.Post;
@@ -40,7 +40,7 @@ public interface IBusinessProfileApi {
     Call<Void> deleteUnapprovedPost(@Path("postId") String postId);
 
     @PUT("post/approveComment/{commentId}")
-    Call<Comments> updateApprovedComment(@Path("commentId") String commentId);
+    Call<Comment> updateApprovedComment(@Path("commentId") String commentId);
 
     @DELETE("post/unApproveComment/{commentId}")
     Call<Void> deleteUnapprovedComment(@Path("commentId") String commentId);

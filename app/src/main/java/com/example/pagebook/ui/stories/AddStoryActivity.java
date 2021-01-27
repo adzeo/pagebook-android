@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -44,11 +45,13 @@ public class AddStoryActivity extends AppCompatActivity {
 
     ImageView ivStory;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_story);
-
+        progressDialog=new ProgressDialog(this);
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_add_story);
         setSupportActionBar(toolbar);
@@ -71,6 +74,9 @@ public class AddStoryActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_upload_story_img).setOnClickListener(v -> {
             if (filePath != null) {
+                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+                progressDialog.show();
+                progressDialog.setCanceledOnTouchOutside(false);
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReference();
                 StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
@@ -88,6 +94,7 @@ public class AddStoryActivity extends AppCompatActivity {
                                         userStory.setUserId(myUser.getId());
                                         userStory.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
                                         userStory.setUserImageUrl(myUser.getImgUrl());
+                                        progressDialog.dismiss();
                                     }
                                 });
                             }
@@ -97,7 +104,8 @@ public class AddStoryActivity extends AppCompatActivity {
                             public void onFailure(@NonNull Exception exception) {
                                 //if the upload is not successful
                                 //and displaying error message
-                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "onFailure Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                                progressDialog.dismiss();
                             }
                         });
             }

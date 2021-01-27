@@ -87,12 +87,79 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_reg_interests"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:hint="Interests"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_register_password" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_main_login_interests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:selectionRequired="true"
+                app:layout_constraintTop_toBottomOf="@+id/tv_reg_interests">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_1_main_login_bollywood"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bollywood"
+                    app:closeIconEnabled="false"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_2_main_login_maths"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maths"
+                    app:closeIconEnabled="false"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_3_main_login_science"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Science"
+                    app:closeIconEnabled="false"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_4_main_login_sports"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sports"
+                    app:closeIconEnabled="false"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_5_main_login_technology"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Technology"
+                    app:closeIconEnabled="false"/>
+
+            </com.google.android.material.chip.ChipGroup>
+
             <Button
                 android:id="@+id/btn_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="64dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
                 android:background="@color/black"
@@ -102,7 +169,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_register_password" />
+                app:layout_constraintTop_toBottomOf="@+id/chip_group_main_login_interests" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

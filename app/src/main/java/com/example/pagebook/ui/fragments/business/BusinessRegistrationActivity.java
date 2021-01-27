@@ -85,6 +85,7 @@ public class BusinessRegistrationActivity extends AppCompatActivity {
         businessCategory.setThreshold(1);
 
         //NOTE: setting the values for the profile
+        etBusinessEmail.setText(myUser.getEmail());
         ivBusinessProfile = findViewById(R.id.iv_business_reg_pic);
 
         findViewById(R.id.btn_choose_business_dp).setOnClickListener(v -> {
@@ -150,7 +151,7 @@ public class BusinessRegistrationActivity extends AppCompatActivity {
 
                     //re-directing to BusinessProfilePageActivity for user feeds
                     Intent intent = new Intent(BusinessRegistrationActivity.this, BusinessProfilePageActivity.class);
-                    intent.putExtra("businessProfileId", businessProfile.getId());
+                    intent.putExtra("businessProfileId", savedBusinessProfile.getId());
                     startActivity(intent);
                 }
 

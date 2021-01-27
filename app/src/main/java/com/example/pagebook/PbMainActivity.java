@@ -5,12 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
+import com.bumptech.glide.Glide;
 import com.example.pagebook.models.user.UserBuilder;
+import com.example.pagebook.ui.commonlogin.LoginActivity;
 import com.example.pagebook.ui.fragments.business.BusinessFragment;
 import com.example.pagebook.ui.fragments.homefeed.HomeFeedFragment;
 import com.example.pagebook.ui.fragments.notification.NotificationFragment;
@@ -99,6 +109,8 @@ public class PbMainActivity extends AppCompatActivity implements BottomNavigatio
 
             case R.id.action_app_logout:
                 UserBuilder.destroy();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
                 finish();
                 break;
         }

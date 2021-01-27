@@ -1,6 +1,6 @@
 package com.example.pagebook.ui.fragments.homefeed.adapter;
 
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +19,7 @@ import com.example.pagebook.models.PostDTO;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
+import com.example.pagebook.ui.comments.CommentsActivity;
 import com.example.pagebook.ui.fragments.homefeed.HomeFeedFragment;
 import com.example.pagebook.ui.fragments.homefeed.network.IPostsApi;
 
@@ -144,6 +145,13 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
             holder.llSadEmoji.setEnabled(false);
 
             initSetActionApi(postAction);
+        });
+
+        holder.llComments.setOnClickListener(v -> {
+            Intent intent = new Intent(homeFeedFragment.getContext(), CommentsActivity.class);
+            intent.putExtra("postId", post.getPost().getPostId());
+            intent.putExtra("parentCommentId", String.valueOf(1));
+            holder.rootView.getContext().startActivity(intent);
         });
     }
 

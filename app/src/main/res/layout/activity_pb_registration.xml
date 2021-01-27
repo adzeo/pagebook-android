@@ -144,6 +144,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:hint="Email"
+                android:enabled="false"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -151,6 +152,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et__reg_email"
+                    android:inputType="textEmailAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

@@ -5,6 +5,7 @@
 
     <!-- Strings used for Retrofit Calls for Base URL's -->
     <string name="baseUrl">http://10.177.1.241:8760/pagebook/api/</string>
+    <string name="mainBaseUrl">http://10.177.2.29:9005/</string>
 
 <!--    <string name="baseStoryUrl">http://10.177.1.178:8773/pagebook/api/story/</string>-->
 <!--    <string name="baseProfileUrl">http://10.177.1.117:9002/pagebook/api/profile/</string>-->

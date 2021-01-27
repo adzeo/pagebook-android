@@ -1,6 +1,7 @@
 package com.example.pagebook.ui.comments.network;
 
-import com.example.pagebook.models.Comments;
+import com.example.pagebook.models.CommentDTO;
+import com.example.pagebook.models.Comment;
 
 import java.util.List;
 
@@ -13,10 +14,10 @@ import retrofit2.http.Query;
 public interface ICommentsApi {
 
     @POST("post/addComment")
-    Call<Comments> addComment(@Body Comments comment);
+    Call<Comment> addComment(@Body Comment comment);
 
     @GET("post/getComments")
-    Call<List<Comments>> getPostComments(@Query("parentCommentId") String parentCommentId, @Query("postId") String postId);
+    Call<List<CommentDTO>> getPostComments(@Query("parentCommentId") String parentCommentId, @Query("postId") String postId);
 
 
 }

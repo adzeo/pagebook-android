@@ -2,10 +2,34 @@ package com.example.pagebook.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Comments{
+public class Comment {
 
 	@SerializedName("commentId")
 	private String commentId;
+
+	public void setCommentId(String commentId) {
+		this.commentId = commentId;
+	}
+
+	public void setParentCommentId(String parentCommentId) {
+		this.parentCommentId = parentCommentId;
+	}
+
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public void setApproved(boolean approved) {
+		isApproved = approved;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	@SerializedName("parentCommentId")
 	private String parentCommentId;

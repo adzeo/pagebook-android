@@ -3,6 +3,7 @@ package com.example.pagebook.ui.fragments.profile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -103,6 +104,7 @@ public class PbRegistrationActivity extends AppCompatActivity {
         ChipGroup cgInterests = findViewById(R.id.chip_group_reg_interests);
         TextInputEditText etBio = findViewById(R.id.et_reg_bio);
 
+        etEmail.setText(getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("UserEmail", ""));
         userProfile.setProfileType("PUBLIC");
 
         rgProfileType.setOnCheckedChangeListener((group, checkedId) -> {

@@ -67,7 +67,7 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
-        progressDialog=new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_business_search);
         setSupportActionBar(toolbar);
@@ -182,36 +182,31 @@ public class AddPostActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_add_post).setOnClickListener(v -> {
-            if (fileUrl != null) {
+            post.setUserId(myUser.getId());
+            post.setProfileType(myUser.getProfileType());
+            if (post.getFileType().equals("TEXT")) {
+                post.setFileURL(etTextPost.getText().toString());
+            }
 
-                post.setUserId(myUser.getId());
-                post.setProfileType(myUser.getProfileType());
-                if (post.getFileType().equals("TEXT")) {
-                    post.setFileURL(etTextPost.getText().toString());
+            Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
+            IAddPostAPi iAddPostAPi = retrofit.create(IAddPostAPi.class);
+            Call<Post> responses = iAddPostAPi.addPost(post);
+            responses.enqueue(new Callback<Post>() {
+                @Override
+                public void onResponse(Call<Post> call, retrofit2.Response<Post> responseData) {
+                    if (responseData.body() != null) {
+                        Toast.makeText(AddPostActivity.this, "Post successfully uploaded", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AddPostActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
-                IAddPostAPi iAddPostAPi = retrofit.create(IAddPostAPi.class);
-                Call<Post> responses = iAddPostAPi.addPost(post);
-                responses.enqueue(new Callback<Post>() {
-                    @Override
-                    public void onResponse(Call<Post> call, retrofit2.Response<Post> responseData) {
-                        if (responseData.body() != null) {
-                            Toast.makeText(AddPostActivity.this, "Post successfully uploaded", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(AddPostActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Post> call, Throwable t) {
-                        Toast.makeText(AddPostActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(this, "Post Content is Empty", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onFailure(Call<Post> call, Throwable t) {
+                    Toast.makeText(AddPostActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 

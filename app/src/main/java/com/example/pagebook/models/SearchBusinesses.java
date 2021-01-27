@@ -12,6 +12,9 @@ public class SearchBusinesses {
     @SerializedName("id")
     private String id;
 
+    @SerializedName("flag")
+    private boolean flag;
+
     public String getImageUrl(){
         return imageUrl;
     }

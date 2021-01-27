@@ -41,6 +41,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 public class HomeFeedFragment extends Fragment {
 
     User myUser = UserBuilder.getInstance();
@@ -48,12 +50,15 @@ public class HomeFeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_feed, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_feed, container, false);
+        return  view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        onButtonShowPopupWindowClick(view);
 
 //        onButtonShowPopupWindowClick();
 
@@ -195,35 +200,62 @@ public class HomeFeedFragment extends Fragment {
         });
     }
 
-    public void onButtonShowPopupWindowClick() {
-        // inflate the layout of the popup window
-        View popupView = (LayoutInflater.from(getActivity()).inflate(R.layout.popup_advertisement, null));
-        final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//    public void onButtonShowPopupWindowClick(View view) {
+//        // inflate the layout of the popup window
+//        View popupView = (LayoutInflater.from(getActivity()).inflate(R.layout.popup_advertisement, null));
+//        final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//
+//        // Glide.with()
+//        ImageView popUpAd = popupView.findViewById(R.id.iv_pop_up_ad);
+//        Glide.with(this).load("https://picsum.photos/200/300").placeholder(R.drawable.loading_placeholder).into(popUpAd);
+//
+////        // create the popup window
+////        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+////        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+////        width = 550;
+////
+////        boolean focusable = false; // lets taps outside the popup also dismiss it
+////
+////        // show the popup window
+////        // which view you pass in doesn't matter, it is only used for the window token
+////        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+//
+//        popupWindow.showAsDropDown(popupView,0, 0);
+//
+//        // dismiss the popup window when touched
+//        popupView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                //popupWindow.dismiss();
+//                return true;
+//            }
+//        });
+//    }
 
-        // Glide.with()
-        ImageView popUpAd = popupView.findViewById(R.id.iv_pop_up_ad);
-        Glide.with(this).load("https://picsum.photos/200/300").placeholder(R.drawable.loading_placeholder).into(popUpAd);
-
+//    public void onButtonShowPopupWindowClick(View view) {
+//        // inflate the layout of the popup window
+//        LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View popupView = inflater.inflate(R.layout.popup_advertisement, null);
+//        // Glide.with()
+//        ImageView imageView = popupView.findViewById(R.id.iv_pop_up_ad);
+//        Glide.with(this).load("https://picsum.photos/200/300").placeholder(R.drawable.loading_placeholder).into(imageView);
+//
 //        // create the popup window
 //        int width = LinearLayout.LayoutParams.MATCH_PARENT;
 //        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-//        width = 550;
-//
+//        width=550;
 //        boolean focusable = false; // lets taps outside the popup also dismiss it
-//
+//        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 //        // show the popup window
-//        // which view you pass in doesn't matter, it is only used for the window token
+//        // which view you pass in doesn't matter, it is only used for the window tolken
 //        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-        popupWindow.showAsDropDown(popupView,0, 0);
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //popupWindow.dismiss();
-                return true;
-            }
-        });
-    }
+//        // dismiss the popup window when touched
+//        popupView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                //popupWindow.dismiss();
+//                return true;
+//            }
+//        });
+//    }
 }

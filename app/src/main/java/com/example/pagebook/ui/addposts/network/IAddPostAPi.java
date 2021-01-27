@@ -9,7 +9,6 @@ import retrofit2.http.POST;
 
 public interface IAddPostAPi {
 
-    @Headers("")
     @POST("post/")
     Call<Post> addPost(@Body Post post);
 }

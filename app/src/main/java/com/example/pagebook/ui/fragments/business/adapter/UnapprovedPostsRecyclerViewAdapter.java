@@ -52,11 +52,15 @@ public class UnapprovedPostsRecyclerViewAdapter extends RecyclerView.Adapter<Una
         holder.tvPostDate.setText(post.getPost().getUploadTime().toString());
 
         // set the post content
-        if(post.getPost().getFileType().equals("Text")) {
+        if(post.getPost().getFileType().equals("TEXT")) {
+            holder.tvPostText.setVisibility(View.VISIBLE);
             holder.tvPostText.setText(post.getPost().getFileURL());
+            holder.ivPostImage.setVisibility(View.GONE);
         }
-        else if (post.getPost().getFileType().equals("Image")){
+        else if (post.getPost().getFileType().equals("IMAGE")){
+            holder.ivPostImage.setVisibility(View.VISIBLE);
             Glide.with(holder.ivPostImage.getContext()).load(post.getPost().getFileURL()).placeholder(R.drawable.loading_placeholder).into(holder.ivPostImage);
+            holder.tvPostText.setVisibility(View.GONE);
         }
 
         holder.btnApprove.setOnClickListener(v -> {

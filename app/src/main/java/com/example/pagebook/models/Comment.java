@@ -7,6 +7,21 @@ public class Comment {
 	@SerializedName("commentId")
 	private String commentId;
 
+	@SerializedName("parentCommentId")
+	private String parentCommentId;
+
+	@SerializedName("postId")
+	private String postId;
+
+	@SerializedName("text")
+	private String text;
+
+	@SerializedName("isApproved")
+	private boolean isApproved;
+
+	@SerializedName("userId")
+	private String userId;
+
 	public void setCommentId(String commentId) {
 		this.commentId = commentId;
 	}
@@ -30,21 +45,6 @@ public class Comment {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-
-	@SerializedName("parentCommentId")
-	private String parentCommentId;
-
-	@SerializedName("postId")
-	private String postId;
-
-	@SerializedName("text")
-	private String text;
-
-	@SerializedName("isApproved")
-	private boolean isApproved;
-
-	@SerializedName("userId")
-	private String userId;
 
 	public String getCommentId(){
 		return commentId;

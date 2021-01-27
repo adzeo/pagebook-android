@@ -188,6 +188,11 @@ public class AddPostActivity extends AppCompatActivity {
                 post.setFileURL(etTextPost.getText().toString());
             }
 
+            if(getIntent().getStringExtra("business").equals("true")) {
+                post.setProfileType("BUSINESS");
+                post.setBusinessId(getIntent().getStringExtra("businessId"));
+            }
+
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IAddPostAPi iAddPostAPi = retrofit.create(IAddPostAPi.class);
             Call<Post> responses = iAddPostAPi.addPost(post);

@@ -24,8 +24,11 @@ public interface IBusinessProfileApi {
     @GET("business/following/details/{userId}")
     Call<List<BusinessDTO>> getBusinessPagesFollowingList(@Path("userId") String userId);
 
-    @POST("business/")
-    Call<Moderators> addModerator();
+    @GET("business/moderators/{businessId}")
+    Call<Moderators> getBusinessModeratorsList(@Path("businessId") String businessId);
+
+    @POST("business//addmoderator/{businessId}/{moderatorId}")
+    Call<Moderators> addModerator(@Path("businessId") String businessId, @Path("moderatorId") String moderatorId);
 
     @GET("post/getBusinessPost/{businessId}")
     Call<List<PostDTO>> getBusinessPosts(@Path("businessId") String businessId);

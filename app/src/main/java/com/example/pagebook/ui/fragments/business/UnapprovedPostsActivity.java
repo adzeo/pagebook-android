@@ -45,7 +45,7 @@ public class UnapprovedPostsActivity extends AppCompatActivity {
     private void initApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-        Call<List<PostDTO>> responses = iBusinessProfileApi.getUnapprovedBusinessPosts(getIntent().getStringExtra(getIntent().getStringExtra("unapprovedPostsBusinessId")));
+        Call<List<PostDTO>> responses = iBusinessProfileApi.getUnapprovedBusinessPosts(getIntent().getStringExtra("unapprovedPostsBusinessId"));
         responses.enqueue(new Callback<List<PostDTO>>() {
             @Override
             public void onResponse(Call<List<PostDTO>> call, retrofit2.Response<List<PostDTO>> responseData) {

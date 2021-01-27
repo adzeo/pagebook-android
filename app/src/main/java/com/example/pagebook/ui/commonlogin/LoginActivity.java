@@ -46,22 +46,21 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseToken> call, Response<ResponseToken> response) {
                     if (response.body() != null) {
-//                        if(!response.body().getError().equals("Incorrect Username and Password")) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("AuthToken", response.body().getData().getJwtToken());
+//                        if (!response.body().getError().equals("Incorrect Username and Password")) {
+                            SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("AuthToken", response.body().getData().getJwtToken());
 
-                        editor.putString("UserEmail", etLoginEmail.getText().toString());
-                        editor.apply();
+                            editor.putString("UserEmail", etLoginEmail.getText().toString());
+                            editor.apply();
 
-                        Intent intent = new Intent(LoginActivity.this, AppRedirectActivity.class);
-                        startActivity(intent);
-                        finish();
+                            Intent intent = new Intent(LoginActivity.this, AppRedirectActivity.class);
+                            startActivity(intent);
+                            finish();
 //                        }
-//                        else
-//                        {
+//                        else {
 //                            Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-//                            Intent intent=new Intent(LoginActivity.this,RegistrationActivity.class);
+//                            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
 //                            startActivity(intent);
 //                        }
                     }

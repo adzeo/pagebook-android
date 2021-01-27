@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.pagebook.R;
 import com.example.pagebook.models.BusinessProfile;
 import com.example.pagebook.models.Followers;
+import com.example.pagebook.models.Moderators;
 import com.example.pagebook.models.PostDTO;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
@@ -25,6 +27,7 @@ import com.example.pagebook.ui.addposts.AddPostActivity;
 import com.example.pagebook.ui.fragments.business.adapter.BusinessPostsRecyclerViewAdapter;
 import com.example.pagebook.ui.fragments.business.network.IBusinessProfileApi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -51,10 +54,12 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        initBusinessProfileApi();
+        initBusinessModeratorsApi();
 
         findViewById(R.id.btn_business_add_posts).setOnClickListener(v -> {
             Intent intent = new Intent(BusinessProfilePageActivity.this, AddPostActivity.class);
+            intent.putExtra("business","true");
+            intent.putExtra("businessId", getIntent().getStringExtra("businessProfileId"));
             startActivity(intent);
         });
 
@@ -67,6 +72,12 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
         findViewById(R.id.btn_unapproved_posts).setOnClickListener(v -> {
             Intent intent = new Intent(BusinessProfilePageActivity.this, UnapprovedPostsActivity.class);
             intent.putExtra("unapprovedPostsBusinessId", getIntent().getStringExtra("businessProfileId"));
+            startActivity(intent);
+        });
+
+        findViewById(R.id.btn_add_moderator).setOnClickListener(v -> {
+            Intent intent = new Intent(BusinessProfilePageActivity.this, AddModeratorActivity.class);
+            intent.putExtra("businessId", getIntent().getStringExtra("businessProfileId"));
             startActivity(intent);
         });
 
@@ -100,11 +111,38 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
             });
         }
 
-
-        //TODO: api call to retrieve the moderator list to check if current user is moderator
-
         //TODO: api call to add moderator
 
+    }
+
+    private void initBusinessModeratorsApi() {
+        Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
+        IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
+
+        Call<Moderators> businessProfileResponses = iBusinessProfileApi.getBusinessModeratorsList(getIntent().getStringExtra("businessProfileId"));
+        businessProfileResponses.enqueue(new Callback<Moderators>() {
+            @Override
+            public void onResponse(Call<Moderators> call, retrofit2.Response<Moderators> responseData) {
+
+                if (responseData.body() != null) {
+
+                    Moderators moderators = responseData.body();
+                    if(!moderators.getModerators().contains(myUser.getId())) {
+                        findViewById(R.id.ll_moderator_options).setVisibility(View.GONE);
+                    }
+
+                    initBusinessProfileApi();
+                }
+                else {
+                    Toast.makeText(BusinessProfilePageActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Moderators> call, Throwable t) {
+                Toast.makeText(BusinessProfilePageActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initBusinessProfileApi() {
@@ -114,7 +152,6 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
         TextView businessCategory = findViewById(R.id.tv_business_profile_category);
         TextView businessDesc = findViewById(R.id.tv_business_profile_desc);
         Button followBusiness = findViewById(R.id.btn_follow_business);
-
 
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
@@ -155,7 +192,7 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
     private void initBusinessPostsApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-        Call<List<PostDTO>> businessPostsResponses = iBusinessProfileApi.getBusinessPosts(getIntent().getStringExtra(getIntent().getStringExtra("businessProfileId")));
+        Call<List<PostDTO>> businessPostsResponses = iBusinessProfileApi.getBusinessPosts(getIntent().getStringExtra("businessProfileId"));
         businessPostsResponses.enqueue(new Callback<List<PostDTO>>() {
             @Override
             public void onResponse(Call<List<PostDTO>> call, retrofit2.Response<List<PostDTO>> responseData) {
@@ -165,7 +202,7 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
                     List<PostDTO> businessPostsList = responseData.body();
 
                     //fetching the id of recycler view
-                    RecyclerView recyclerView = findViewById(R.id.friend_posts_recycle_view);
+                    RecyclerView recyclerView = findViewById(R.id.business_posts_recycle_view);
                     BusinessPostsRecyclerViewAdapter businessPostsRecyclerViewAdapter = new BusinessPostsRecyclerViewAdapter(businessPostsList, BusinessProfilePageActivity.this);
 
                     //setting Linear Layout manager in the recycler view

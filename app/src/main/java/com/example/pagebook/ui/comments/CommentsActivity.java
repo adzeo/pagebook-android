@@ -7,19 +7,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.pagebook.R;
 import com.example.pagebook.models.Comment;
 import com.example.pagebook.models.CommentDTO;
-import com.example.pagebook.models.PostDTO;
+import com.example.pagebook.models.user.User;
+import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
 import com.example.pagebook.ui.comments.adapter.CommentsRecyclerViewAdapter;
 import com.example.pagebook.ui.comments.network.ICommentsApi;
-import com.example.pagebook.ui.fragments.homefeed.HomeFeedFragment;
-import com.example.pagebook.ui.fragments.homefeed.adapter.HomeFeedRecyclerViewAdapter;
-import com.example.pagebook.ui.fragments.homefeed.network.IPostsApi;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -30,6 +27,8 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 
 public class CommentsActivity extends AppCompatActivity {
+
+    User myUser = UserBuilder.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,11 @@ public class CommentsActivity extends AppCompatActivity {
 
         tvCommentLayout.setEndIconOnClickListener(v -> {
             Comment comment = new Comment();
-//            comment;
+            comment.setApproved(false);
+            comment.setParentCommentId(getIntent().getStringExtra("parentCommentId"));
+            comment.setPostId(getIntent().getStringExtra("postId"));
+            comment.setText(etComment.getText().toString());
+            comment.setUserId(myUser.getId());
 
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             ICommentsApi iCommentsApi = retrofit.create(ICommentsApi.class);
@@ -59,13 +62,10 @@ public class CommentsActivity extends AppCompatActivity {
             responses.enqueue(new Callback<Comment>() {
                 @Override
                 public void onResponse (Call<Comment> call, retrofit2.Response<Comment> responseData) {
-
                     if(responseData.body() != null) {
-
-                        Comment commentDTOList = responseData.body();
-                    }
-                    else {
-                        finish();
+                        Toast.makeText(CommentsActivity.this, "Comment Saved", Toast.LENGTH_SHORT).show();
+                        etComment.setText("");
+                        initApi();
                     }
                 }
 
@@ -75,12 +75,9 @@ public class CommentsActivity extends AppCompatActivity {
                 }
             });
 
-
         });
 
         initApi();
-
-
     }
 
     private void initApi() {
@@ -105,6 +102,7 @@ public class CommentsActivity extends AppCompatActivity {
                     //setting Linear Layout manager in the recycler view
                     recyclerView.setLayoutManager(new LinearLayoutManager(CommentsActivity.this));
                     recyclerView.setAdapter(commentsRecyclerViewAdapter);
+                    commentsRecyclerViewAdapter.notifyDataSetChanged();
                 }
                 else {
                     finish();

@@ -11,14 +11,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.pagebook.R;
+import com.example.pagebook.models.StoryFeedDTO;
+import com.example.pagebook.models.user.User;
+import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
-import com.example.pagebook.responsemodel.GenericResponse;
 import com.example.pagebook.ui.stories.adapter.StoriesRecyclerViewAdapter;
-import com.example.pagebook.ui.stories.model.Story;
-import com.example.pagebook.ui.stories.model.UserStory;
+import com.example.pagebook.models.Story;
 import com.example.pagebook.ui.stories.network.IStoriesApi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -26,6 +26,8 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 
 public class StoriesActivity extends AppCompatActivity implements StoriesRecyclerViewAdapter.UserDataInterface {
+
+    User myUser = UserBuilder.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,25 +54,22 @@ public class StoriesActivity extends AppCompatActivity implements StoriesRecycle
 
     @Override
     public void onUserClick(Story story) {
-        UserStory userStory = new UserStory();
-        userStory.setUserStoryList(story.getFileUrl());
-
         Intent intent = new Intent(StoriesActivity.this, ViewUserStoryActivity.class);
-        intent.putExtra("userStories", userStory);
+        intent.putExtra("userStory", story.getFileUrl());
         startActivity(intent);
     }
 
     private void initApi() {
-        Retrofit retrofit = RetrofitBuilder.getInstance();
+        Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IStoriesApi iStoriesApi = retrofit.create(IStoriesApi.class);
-        Call<GenericResponse> responses = iStoriesApi.getStories();
-        responses.enqueue(new Callback<GenericResponse>() {
+        Call<StoryFeedDTO> responses = iStoriesApi.getStories(myUser.getId());
+        responses.enqueue(new Callback<StoryFeedDTO>() {
             @Override
-            public void onResponse (Call<GenericResponse> call, retrofit2.Response<GenericResponse> storyResponseData) {
+            public void onResponse (Call<StoryFeedDTO> call, retrofit2.Response<StoryFeedDTO> responseData) {
 
-                if(storyResponseData.body().isStatus()) {
+                if(responseData.body() != null) {
 
-                    List<Story> storiesList = (List<Story>) storyResponseData.body().getBody();
+                    List<Story> storiesList = responseData.body().getStories();
 
                     //fetching the id of recycler view
                     RecyclerView recyclerView = findViewById(R.id.stories_recycle_view);
@@ -81,12 +80,12 @@ public class StoriesActivity extends AppCompatActivity implements StoriesRecycle
                     recyclerView.setAdapter(storiesRecyclerViewAdapter);
                 }
                 else {
-                    Toast.makeText(StoriesActivity.this, storyResponseData.body().getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StoriesActivity.this, "Error", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure (Call<GenericResponse> call, Throwable t) {
+            public void onFailure (Call<StoryFeedDTO> call, Throwable t) {
                 Toast.makeText(StoriesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

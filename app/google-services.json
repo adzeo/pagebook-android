@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "171065442052",
+    "project_id": "pagebook-582c2",
+    "storage_bucket": "pagebook-582c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171065442052:android:5bd12e66b26245b5e55a51",
+        "android_client_info": {
+          "package_name": "com.example.pagebook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "171065442052-ggm8po6uo9qh8ki889c6lunfdjnuf5vs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYKbFNeiHvdKqSg7qTsgfogKiORp-qRgg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "171065442052-ggm8po6uo9qh8ki889c6lunfdjnuf5vs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

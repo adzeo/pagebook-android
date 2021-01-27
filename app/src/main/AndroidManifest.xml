@@ -16,7 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PageBook.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.stories.AddStoryActivity"></activity>
+        <activity android:name=".ui.commonlogin.AppRedirectActivity"></activity>
+        <activity android:name=".ui.commonlogin.RegistrationActivity" />
+        <activity android:name=".ui.commonlogin.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.friendlist.FriendListActivity" />
+        <activity android:name=".ui.stories.AddStoryActivity" />
         <activity android:name=".ui.fragments.business.AddModeratorActivity" />
         <activity android:name=".ui.addposts.AddPostActivity" />
         <activity android:name=".ui.comments.CommentsActivity" />
@@ -30,14 +40,8 @@
         <activity android:name=".ui.fragments.business.BusinessRegistrationActivity" />
         <activity android:name=".ui.friendrequests.FriendRequestsActivity" />
         <activity android:name=".ui.stories.StoriesActivity" />
-        <activity android:name=".ui.registration.PbRegistrationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.fragments.profile.PbRegistrationActivity"/>
+        <activity android:name=".PbMainActivity"/>
     </application>
 
 </manifest>

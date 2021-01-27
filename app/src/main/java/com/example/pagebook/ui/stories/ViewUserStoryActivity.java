@@ -2,14 +2,12 @@ package com.example.pagebook.ui.stories;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.example.pagebook.R;
-import com.example.pagebook.ui.stories.model.Story;
-import com.example.pagebook.ui.stories.model.UserStory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ViewUserStoryActivity extends AppCompatActivity {
 
@@ -18,10 +16,11 @@ public class ViewUserStoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_story);
 
-        UserStory userStory =  (UserStory) getIntent().getSerializableExtra("userStories");
+        ImageView userStory = findViewById(R.id.iv_user_story);
+        userStory.setImageURI(Uri.parse(getIntent().getStringExtra("userStory")));
 
-        for(String story : userStory.getUserStoryList()) {
-
-        }
+        userStory.setOnClickListener(v -> {
+            finish();
+        });
     }
 }

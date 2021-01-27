@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.pagebook.R;
 import com.example.pagebook.ui.stories.StoriesActivity;
-import com.example.pagebook.ui.stories.model.Story;
+import com.example.pagebook.models.Story;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class StoriesRecyclerViewAdapter extends RecyclerView.Adapter<StoriesRecy
         // set user name, image and time for the post
         Glide.with(holder.ivStoryUser.getContext()).load(story.getUserImageUrl()).placeholder(R.drawable.user_placeholder).into(holder.ivStoryUser);
         holder.tvStoryUserName.setText(story.getUserName());
-
+        holder.rootView.setOnClickListener((view -> storiesActivity.onUserClick(story)));
     }
 
     @Override

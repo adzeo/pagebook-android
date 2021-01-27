@@ -24,6 +24,8 @@ public class CommentsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        //TODO: api call for comments
     }
 
     @Override

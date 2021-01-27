@@ -46,17 +46,46 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/btn_change_business_dp"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:text="Change Profile Photo"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_business_edit_pic" />
+                app:layout_constraintTop_toBottomOf="@+id/iv_business_edit_pic">
+
+                <Button
+                    android:id="@+id/btn_change_business_dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="Choose Image"
+                    android:layout_weight="1"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginLeft="16dp" />
+
+                <Button
+                    android:id="@+id/btn_upload_changed_business_dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_weight="1"
+                    android:text="Upload Iamge"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="24dp"/>
+
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tv_change_business_name"
@@ -72,7 +101,7 @@
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_change_business_dp">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_change_business_name"
@@ -91,8 +120,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:enabled="false"
                 android:hint="Moderator Email"
+                android:enabled="false"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -100,6 +129,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_change_business_email"
+                    android:enabled="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -148,7 +178,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_change_business_desc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

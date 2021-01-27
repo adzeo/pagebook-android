@@ -1,12 +1,26 @@
 package com.example.pagebook.ui.fragments.homefeed.network;
 
-import com.example.pagebook.responsemodel.GenericResponse;
+import android.app.Notification;
+
+import com.example.pagebook.models.PostAction;
+import com.example.pagebook.models.PostDTO;
+
+import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface IPostsApi {
 
-    @GET("posts")
-    Call<GenericResponse> getFeedPosts();
+    @GET("post/getFeedPosts/{userId}/{page}")
+    Call<List<PostDTO>> getFeedPosts(@Path("userId") String userId, @Path("page") int page);
+
+    @GET("post/getUsersPost/{userId}")
+    Call<List<PostDTO>> getUsersPosts(@Path("userId") String userId);
+
+    @POST("post/addAction")
+    Call<PostAction> postPostAction(@Body PostAction postAction);
 }

@@ -31,7 +31,7 @@ public class PostDTO {
 	@SerializedName("performedAction")
 	private int performedAction;
 
-	@SerializedName("totalHappyEmoji")
+	@SerializedName("totalWowEmoji")
 	private int totalHappyEmoji;
 
 	public int getTotalComments(){

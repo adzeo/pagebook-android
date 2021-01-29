@@ -4,14 +4,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Strings used for Retrofit Calls for Base URL's -->
-    <string name="baseUrl">http://10.177.1.241:8760/pagebook/api/</string>
+    <string name="baseUrl">http://10.177.2.29:8760/pagebook/api/</string>
     <string name="mainBaseUrl">http://10.177.2.29:9005/</string>
 
-<!--    <string name="baseStoryUrl">http://10.177.1.178:8773/pagebook/api/story/</string>-->
-<!--    <string name="baseProfileUrl">http://10.177.1.117:9002/pagebook/api/profile/</string>-->
-<!--    <string name="baseBusinessUrl">http://10.177.1.178:8771/pagebook/api/business/</string>-->
-<!--    <string name="baseSearchUrl">http://10.177.1.178:8772/pagebook/api/search/</string>-->
-<!--    <string name="basePostUrl">http://10.177.1.117:8082/pagebook/api/post/</string>-->
+    <!--    <string name="baseStoryUrl">http://10.177.1.178:8773/pagebook/api/story/</string>-->
+    <!--    <string name="baseProfileUrl">http://10.177.1.117:9002/pagebook/api/profile/</string>-->
+    <!--    <string name="baseBusinessUrl">http://10.177.1.178:8771/pagebook/api/business/</string>-->
+    <!--    <string name="baseSearchUrl">http://10.177.1.178:8772/pagebook/api/search/</string>-->
+    <!--    <string name="basePostUrl">http://10.177.1.117:8082/pagebook/api/post/</string>-->
 
     <string name="title_activity_friend_list">FriendListActivity</string>
     <!-- Strings used for fragments for navigation -->

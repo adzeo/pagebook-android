@@ -46,7 +46,6 @@ public class RegistrationActivity extends AppCompatActivity {
         ChipGroup chipGroup = (ChipGroup) findViewById(R.id.chip_group_main_login_interests);
         findViewById(R.id.btn_register).setOnClickListener(v -> {
 
-
             int chipCount = chipGroup.getChildCount();
             for (int i = 0; i < chipCount; i++) {
                 Chip selectedChip = (Chip) chipGroup.getChildAt(i);
@@ -70,10 +69,11 @@ public class RegistrationActivity extends AppCompatActivity {
                         SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("AuthToken", response.body().getData().getJwtToken());
+                        editor.putString("UserEmail", etLoginEmail.getText().toString());
+                        editor.putString("MyInterests", chipList.toString());
                         editor.apply();
                         Intent intent = new Intent(RegistrationActivity.this, AppRedirectActivity.class);
                         startActivity(intent);
-                        finish();
                     }
                 }
 

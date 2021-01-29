@@ -5,7 +5,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +22,7 @@ import com.example.pagebook.models.SendFriendRequests;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
+import com.example.pagebook.ui.fragments.homefeed.network.IUserProfileApi;
 import com.example.pagebook.ui.friendsprofile.adapter.FriendsProfilePostsRecyclerViewAdapter;
 import com.example.pagebook.ui.friendsprofile.network.IFriendProfileApi;
 
@@ -27,6 +30,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class FriendsProfileActivity extends AppCompatActivity {
@@ -34,6 +38,13 @@ public class FriendsProfileActivity extends AppCompatActivity {
     User myUser = UserBuilder.getInstance();
     Boolean isFriend = false;
     String friendProfileType = "PRIVATE";
+
+    ImageView friendImage;
+    TextView friendName;
+    TextView friendEmail;
+    TextView friendInterests;
+    TextView friendBio;
+    Button btnFollowFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +61,12 @@ public class FriendsProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        Button btnFollowFriend = findViewById(R.id.btn_follow_friend);
+        friendImage = findViewById(R.id.iv_friend_dp);
+        friendName = findViewById(R.id.tv_friend_profile_name);
+        friendEmail = findViewById(R.id.tv_friend_profile_email);
+        friendInterests = findViewById(R.id.tv_friend_profile_interests);
+        friendBio = findViewById(R.id.tv_friend_profile_bio);
+        btnFollowFriend = findViewById(R.id.btn_follow_friend);
 
         if (btnFollowFriend.isEnabled()) {
             btnFollowFriend.setOnClickListener(v -> {
@@ -59,10 +75,10 @@ public class FriendsProfileActivity extends AppCompatActivity {
 
                 Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
                 IFriendProfileApi iFriendProfileApi = retrofit.create(IFriendProfileApi.class);
-                Call<Void> friendProfileResponses = iFriendProfileApi.sendFriendRequest(friendRequest);
-                friendProfileResponses.enqueue(new Callback<Void>() {
+                Call<SendFriendRequests> friendProfileResponses = iFriendProfileApi.sendFriendRequest(friendRequest, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+                friendProfileResponses.enqueue(new Callback<SendFriendRequests>() {
                     @Override
-                    public void onResponse(Call<Void> call, retrofit2.Response<Void> responseData) {
+                    public void onResponse(Call<SendFriendRequests> call, retrofit2.Response<SendFriendRequests> responseData) {
 
                         if (responseData.body() != null) {
                             Toast.makeText(FriendsProfileActivity.this, "Friend Request Sent", Toast.LENGTH_SHORT).show();
@@ -74,7 +90,7 @@ public class FriendsProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(Call<SendFriendRequests> call, Throwable t) {
                         Toast.makeText(FriendsProfileActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -86,17 +102,10 @@ public class FriendsProfileActivity extends AppCompatActivity {
     }
 
     private void initApi() {
-        ImageView friendImage = findViewById(R.id.iv_friend_dp);
-        TextView friendName = findViewById(R.id.tv_friend_profile_name);
-        TextView friendEmail = findViewById(R.id.tv_friend_profile_email);
-        TextView friendInterests = findViewById(R.id.tv_friend_profile_interests);
-        TextView friendBio = findViewById(R.id.tv_friend_profile_bio);
-        Button followFriend = findViewById(R.id.btn_follow_friend);
-
         //api call to get Friend's Profile
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IFriendProfileApi iFriendProfileApi = retrofit.create(IFriendProfileApi.class);
-        Call<Profile> friendProfileResponses = iFriendProfileApi.getFriendProfile(getIntent().getStringExtra("friendUserId"));
+        Call<Profile> friendProfileResponses = iFriendProfileApi.getFriendProfile(getIntent().getStringExtra("friendUserId"), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         friendProfileResponses.enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, retrofit2.Response<Profile> responseData) {
@@ -110,17 +119,9 @@ public class FriendsProfileActivity extends AppCompatActivity {
                     friendEmail.setText(friendProfile.getEmail());
                     friendInterests.setText(friendProfile.getInterest());
                     friendBio.setText(friendProfile.getBio());
-
                     friendProfileType = friendProfile.getProfileType();
-                    isFriend = myUser.getFriendsList().contains(friendProfile.getUserId());
-                    if (isFriend) {
-                        followFriend.setText("Following");
-                        followFriend.setEnabled(false);
-                    }
 
-                    if (isFriend || friendProfileType.equals("PUBLIC")) {
-                        initFriendsPostApi();
-                    }
+                    initFriendsApi();
 
                 } else {
                     Toast.makeText(FriendsProfileActivity.this, "Error", Toast.LENGTH_SHORT).show();
@@ -134,11 +135,45 @@ public class FriendsProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void initFriendsApi() {
+        Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
+        IUserProfileApi iUserProfileApi = retrofit.create(IUserProfileApi.class);
+
+        //api call to get current User friends id lists to save in the User Singleton
+        Call<List<String>> getUserFriendsIdResponses = iUserProfileApi.getMyFriendsIdList(myUser.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+        getUserFriendsIdResponses.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.body() != null) {
+                    List<String> myFriendsList = response.body();
+
+                    isFriend = myFriendsList.contains(getIntent().getStringExtra("friendUserId"));
+                    if (isFriend) {
+                        btnFollowFriend.setText("Following");
+                        btnFollowFriend.setEnabled(false);
+                    }
+
+                    if (isFriend || friendProfileType.equals("PUBLIC")) {
+                        initFriendsPostApi();
+                    }
+
+                } else {
+                    Log.d("PageBook", "HomeFeed Current User Friends List Details Error");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Toast.makeText(FriendsProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void initFriendsPostApi() {
         //api call to get friend's post based on the profile type
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IFriendProfileApi iFriendPostsApi = retrofit.create(IFriendProfileApi.class);
-        Call<List<PostDTO>> friendPostsResponse = iFriendPostsApi.getFriendsPosts(getIntent().getStringExtra("friendUserId"));
+        Call<List<PostDTO>> friendPostsResponse = iFriendPostsApi.getFriendsPosts(getIntent().getStringExtra("friendUserId"), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         friendPostsResponse.enqueue(new Callback<List<PostDTO>>() {
             @Override
             public void onResponse(Call<List<PostDTO>> call, retrofit2.Response<List<PostDTO>> responseData) {

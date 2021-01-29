@@ -13,7 +13,6 @@ public class RegistrationRequest {
     @SerializedName("password")
     String password;
 
-
     @SerializedName("client")
     String client;
 

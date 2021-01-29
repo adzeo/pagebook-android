@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.ads.SplashScreenAdActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView_close_ad"
@@ -14,6 +15,8 @@
         android:layout_marginEnd="16dp"
         android:elevation="4dp"
         app:cardCornerRadius="15dp"
+        android:clickable="false"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

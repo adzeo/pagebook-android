@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.pagebook.PbMainActivity;
 import com.example.pagebook.R;
 import com.example.pagebook.models.Profile;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
+import com.example.pagebook.ui.ads.SplashScreenAdActivity;
 import com.example.pagebook.ui.commonlogin.network.IAppLoginApi;
 import com.example.pagebook.ui.fragments.profile.PbRegistrationActivity;
 
@@ -36,14 +36,14 @@ public class AppRedirectActivity extends AppCompatActivity {
             IAppLoginApi iAppLoginApi = retrofit.create(IAppLoginApi.class);
 
             // api call for adding in the Profile Service
-            Call<Profile> responses = iAppLoginApi.checkUserByEmail(loggedInEmail);
+            Call<Profile> responses = iAppLoginApi.checkUserByEmail(loggedInEmail, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Profile>() {
                 @Override
                 public void onResponse(Call<Profile> call, Response<Profile> response) {
                     if(response.body() != null) {
                         //re-directing to PbMAinActivity for user feeds
                         Log.d("myTag", "onResponse if in app re-direct");
-                        Intent intent = new Intent(AppRedirectActivity.this, PbMainActivity.class);
+                        Intent intent = new Intent(AppRedirectActivity.this, SplashScreenAdActivity.class);
                         startActivity(intent);
                     }
                 }

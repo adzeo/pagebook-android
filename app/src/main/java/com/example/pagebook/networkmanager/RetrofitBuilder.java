@@ -18,15 +18,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitBuilder extends AppCompatActivity {
     private static Retrofit instance;
 
-    OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-        @Override
-        public Response intercept(Chain chain) throws IOException {
-            Request newRequest  = chain.request().newBuilder()
-                    .addHeader("Authorization", getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""))
-                    .build();
-            return chain.proceed(newRequest);
-        }
-    }).build();
+//    OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+//        @Override
+//        public Response intercept(Chain chain) throws IOException {
+//            Request newRequest  = chain.request().newBuilder()
+//                    .addHeader("Authorization", getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""))
+//                    .build();
+//            return chain.proceed(newRequest);
+//        }
+//    }).build();
 
     private RetrofitBuilder(Context context) {
         //private constructor

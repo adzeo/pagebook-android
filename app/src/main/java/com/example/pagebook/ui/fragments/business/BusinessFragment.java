@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.business;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -65,7 +66,7 @@ public class BusinessFragment extends Fragment implements BusinessesFollowingRec
     private void initApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-        Call<List<BusinessDTO>> responses = iBusinessProfileApi.getBusinessPagesFollowingList(myUser.getId());
+        Call<List<BusinessDTO>> responses = iBusinessProfileApi.getBusinessPagesFollowingList(myUser.getId(), getActivity().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<BusinessDTO>>() {
             @Override
             public void onResponse(Call<List<BusinessDTO>> call, retrofit2.Response<List<BusinessDTO>> responseData) {

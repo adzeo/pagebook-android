@@ -4,22 +4,30 @@ import com.google.gson.annotations.SerializedName;
 
 public class RespondFriendRequest {
 
-    @SerializedName("myId")
-    private String myId;
+    @SerializedName("userId")
+    private String userId;
 
-    @SerializedName("requestorId")
-    private String requestorId;
+    @SerializedName("friendId")
+    private String friendId;
 
-    public RespondFriendRequest(String myId, String requestorId) {
-        this.myId = myId;
-        this.requestorId = requestorId;
+    public RespondFriendRequest(String userId, String friendId) {
+        this.userId = userId;
+        this.friendId = friendId;
     }
 
-    public void setMyId(String myId) {
-        this.myId = myId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setRequestorId(String requestorId) {
-        this.requestorId = requestorId;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getFriendId() {
+        return friendId;
+    }
+
+    public void setFriendId(String friendId) {
+        this.friendId = friendId;
     }
 }

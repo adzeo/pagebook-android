@@ -58,7 +58,7 @@ public class AddModeratorActivity extends AppCompatActivity {
             //checking if the entered email exists in the profile service
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IAppLoginApi iAppLoginApi = retrofit.create(IAppLoginApi.class);
-            Call<Profile> responses = iAppLoginApi.checkUserByEmail(etModeratorEmail.getText().toString());
+            Call<Profile> responses = iAppLoginApi.checkUserByEmail(etModeratorEmail.getText().toString(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Profile>() {
                 @Override
                 public void onResponse(Call<Profile> call, Response<Profile> response) {
@@ -79,7 +79,7 @@ public class AddModeratorActivity extends AppCompatActivity {
     private void initApi(String moderatorId) {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-        Call<Moderators> responses = iBusinessProfileApi.addModerator(getIntent().getStringExtra("businessId"), moderatorId);
+        Call<Moderators> responses = iBusinessProfileApi.addModerator(getIntent().getStringExtra("businessId"), moderatorId, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<Moderators>() {
             @Override
             public void onResponse(Call<Moderators> call, Response<Moderators> response) {

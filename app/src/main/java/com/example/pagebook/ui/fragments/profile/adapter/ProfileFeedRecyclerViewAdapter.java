@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.profile.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,7 +112,7 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
 
         });
 
@@ -125,7 +126,7 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llHappyEmoji.setOnClickListener(v -> {
@@ -137,7 +138,7 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llSadEmoji.setOnClickListener(v -> {
@@ -149,7 +150,7 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llComments.setOnClickListener(v -> {
@@ -160,11 +161,11 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
         });
     }
 
-    private void initSetActionApi(PostAction postAction) {
+    private void initSetActionApi(PostAction postAction, View view) {
 
         Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
         IPostsApi iPostsApi = retrofit.create(IPostsApi.class);
-        Call<PostAction> responses = iPostsApi.postPostAction(postAction);
+        Call<PostAction> responses = iPostsApi.postPostAction(postAction, view.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<PostAction>() {
             @Override
             public void onResponse (Call<PostAction> call, retrofit2.Response<PostAction> responseData) {

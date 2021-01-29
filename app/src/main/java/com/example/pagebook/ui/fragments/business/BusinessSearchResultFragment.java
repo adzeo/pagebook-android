@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.business;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -57,7 +58,7 @@ public class BusinessSearchResultFragment extends Fragment implements SearchBusi
     private void initApi(String searchBusinessQuery) {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         ISearchBusinessApi iSearchBusinessApi = retrofit.create(ISearchBusinessApi.class);
-        Call<List<SearchBusinesses>> responses = iSearchBusinessApi.getSearchBusiness(searchBusinessQuery);
+        Call<List<SearchBusinesses>> responses = iSearchBusinessApi.getSearchBusiness(searchBusinessQuery, getActivity().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<SearchBusinesses>>() {
             @Override
             public void onResponse(Call<List<SearchBusinesses>> call, retrofit2.Response<List<SearchBusinesses>> responseData) {

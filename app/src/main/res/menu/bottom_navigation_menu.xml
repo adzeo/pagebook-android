@@ -12,11 +12,11 @@
         android:icon="@drawable/ic_nav_search"
         android:title="Search"/>
 
-    <item
-        android:id="@+id/bottom_navigation_notification"
-        android:enabled="true"
-        android:icon="@drawable/ic_nav_notification"
-        android:title="Notifications"/>
+<!--    <item-->
+<!--        android:id="@+id/bottom_navigation_notification"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/ic_nav_notification"-->
+<!--        android:title="Notifications"/>-->
     <item
         android:id="@+id/bottom_navigation_business"
         android:enabled="true"

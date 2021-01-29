@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.homefeed.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,9 +60,14 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
 
         // set the post content
         if (post.getPost().getFileType().equals("TEXT")) {
+            holder.tvPostText.setVisibility(View.VISIBLE);
             holder.tvPostText.setText(post.getPost().getFileURL());
-        } else if (post.getPost().getFileType().equals("IMAGE")) {
+            holder.ivPostImage.setVisibility(View.GONE);
+        }
+        else if (post.getPost().getFileType().equals("IMAGE")) {
+            holder.ivPostImage.setVisibility(View.VISIBLE);
             Glide.with(holder.ivPostImage.getContext()).load(post.getPost().getFileURL()).placeholder(R.drawable.loading_placeholder).into(holder.ivPostImage);
+            holder.tvPostText.setVisibility(View.GONE);
         }
 
         switch (post.getPerformedAction()) {
@@ -95,7 +101,6 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
         postAction.setUserId(myUser.getId());
         postAction.setActionType(0);
 
-        //TODO: call post api for action
         holder.llLikes.setOnClickListener(v -> {
             postAction.setActionType(1);
             holder.ivLikes.setImageResource(R.drawable.ic_like);
@@ -106,7 +111,7 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
 
         });
 
@@ -120,7 +125,7 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llHappyEmoji.setOnClickListener(v -> {
@@ -132,7 +137,7 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llSadEmoji.setOnClickListener(v -> {
@@ -144,7 +149,7 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llComments.setOnClickListener(v -> {
@@ -155,11 +160,11 @@ public class HomeFeedRecyclerViewAdapter extends RecyclerView.Adapter<HomeFeedRe
         });
     }
 
-    private void initSetActionApi(PostAction postAction) {
+    private void initSetActionApi(PostAction postAction, View view) {
 
         Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
         IPostsApi iPostsApi = retrofit.create(IPostsApi.class);
-        Call<PostAction> responses = iPostsApi.postPostAction(postAction);
+        Call<PostAction> responses = iPostsApi.postPostAction(postAction, view.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<PostAction>() {
             @Override
             public void onResponse (Call<PostAction> call, retrofit2.Response<PostAction> responseData) {

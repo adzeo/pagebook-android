@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -121,7 +122,7 @@ public class AddStoryActivity extends AppCompatActivity {
             IStoriesApi iStoriesApi = retrofit.create(IStoriesApi.class);
 
             // api call for adding in the Profile Service
-            Call<Story> responses = iStoriesApi.postUserStory(userStory);
+            Call<Story> responses = iStoriesApi.postUserStory(userStory, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Story>() {
                 @Override
                 public void onResponse(Call<Story> call, Response<Story> response) {

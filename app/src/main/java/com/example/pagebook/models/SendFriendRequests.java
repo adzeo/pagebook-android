@@ -3,7 +3,7 @@ package com.example.pagebook.models;
 import com.google.gson.annotations.SerializedName;
 
 public class SendFriendRequests {
-    @SerializedName("friendId")
+    @SerializedName("userId")
     private String friendId;
 
     @SerializedName("requestorId")

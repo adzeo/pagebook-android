@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -57,7 +58,7 @@ public class FriendListActivity extends AppCompatActivity implements FriendListR
     private void initApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IFriendListApi iFriendListApi = retrofit.create(IFriendListApi.class);
-        Call<List<FriendsDTO>> responses = iFriendListApi.getFriendList(myUser.getId());
+        Call<List<FriendsDTO>> responses = iFriendListApi.getFriendList(myUser.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<FriendsDTO>>() {
             @Override
             public void onResponse(Call<List<FriendsDTO>> call, retrofit2.Response<List<FriendsDTO>> responseData) {

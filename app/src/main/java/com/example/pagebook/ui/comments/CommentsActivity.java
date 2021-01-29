@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -58,7 +59,7 @@ public class CommentsActivity extends AppCompatActivity {
 
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             ICommentsApi iCommentsApi = retrofit.create(ICommentsApi.class);
-            Call<Comment> responses = iCommentsApi.addComment(comment);
+            Call<Comment> responses = iCommentsApi.addComment(comment, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Comment>() {
                 @Override
                 public void onResponse (Call<Comment> call, retrofit2.Response<Comment> responseData) {
@@ -86,7 +87,7 @@ public class CommentsActivity extends AppCompatActivity {
         ICommentsApi iCommentsApi = retrofit.create(ICommentsApi.class);
 
         // TODO: Implement Pagination
-        Call<List<CommentDTO>> responses = iCommentsApi.getPostComments(getIntent().getStringExtra("parentCommentId"), getIntent().getStringExtra("postId"));
+        Call<List<CommentDTO>> responses = iCommentsApi.getPostComments(getIntent().getStringExtra("parentCommentId"), getIntent().getStringExtra("postId"), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<CommentDTO>>() {
             @Override
             public void onResponse (Call<List<CommentDTO>> call, retrofit2.Response<List<CommentDTO>> responseData) {

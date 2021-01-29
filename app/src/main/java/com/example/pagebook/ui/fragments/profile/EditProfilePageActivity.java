@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -46,17 +48,27 @@ import retrofit2.Retrofit;
 
 public class EditProfilePageActivity extends AppCompatActivity {
 
-    Profile userProfile = new Profile();
+    Profile userProfile;
     private Uri filePath;
 
-    ImageView ivProfile;
-
     User myUser = UserBuilder.getInstance();
+
+    TextInputEditText etFName;
+    TextInputEditText etLName;
+    TextInputEditText etEmail;
+    RadioGroup rgProfileType;
+    ChipGroup cgInterests;
+    TextInputEditText etBio;
+    ImageView ivProfile;
+    RadioButton rbPrivate;
+    RadioButton rbPublic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_page);
+
+        userProfile = new Profile();
 
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
@@ -68,18 +80,24 @@ public class EditProfilePageActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
             //setting the values for the profile
-            TextInputEditText etFName = findViewById(R.id.et_change_fname);
-            TextInputEditText etLName = findViewById(R.id.et_change_lname);
-            TextInputEditText etEmail = findViewById(R.id.et_change_email);
-            RadioGroup rgProfileType = findViewById(R.id.radioGroup_change_profile_type);
-            ChipGroup cgInterests = findViewById(R.id.chip_group_change_interests);
-            TextInputEditText etBio = findViewById(R.id.et_change_bio);
+            etFName = findViewById(R.id.et_change_fname);
+            etLName = findViewById(R.id.et_change_lname);
+            etEmail = findViewById(R.id.et_change_email);
+            rgProfileType = findViewById(R.id.radioGroup_change_profile_type);
+            cgInterests = findViewById(R.id.chip_group_change_interests);
+            etBio = findViewById(R.id.et_change_bio);
             ivProfile = findViewById(R.id.iv_change_reg_pic);
+            rbPrivate = findViewById(R.id.rb_change_reg_private);
+            rbPublic = findViewById(R.id.rb_change_reg_public);
 
             Glide.with(ivProfile.getContext()).load(myUser.getImgUrl()).placeholder(R.drawable.loading_placeholder).into(ivProfile);
             etFName.setText(myUser.getFirstName());
             etLName.setText(myUser.getLastName());
             etEmail.setText(myUser.getEmail());
+
+//            if(myUser.getProfileType() == null)
+//                myUser.setProfileType("PUBLIC");
+
             if (myUser.getProfileType().equals("PRIVATE")) {
                 rgProfileType.check(R.id.rb_change_reg_private);
             } else {
@@ -142,18 +160,18 @@ public class EditProfilePageActivity extends AppCompatActivity {
                 }
             });
 
-            userProfile.setProfileType("PUBLIC");
+//            userProfile.setProfileType(myUser.getProfileType());
 
-            rgProfileType.setOnCheckedChangeListener((group, checkedId) -> {
-                switch (checkedId) {
-                    case R.id.rb_reg_private:
-                        userProfile.setProfileType("PRIVATE");
-                        break;
-                    case R.id.rb_reg_public:
-                        userProfile.setProfileType("PUBLIC");
-                        break;
-                }
-            });
+//            rgProfileType.setOnCheckedChangeListener((group, checkedId) -> {
+//                switch (checkedId) {
+//                    case R.id.rb_change_reg_private:
+//                        userProfile.setProfileType("PRIVATE");
+//                        break;
+//                    case R.id.rb_change_reg_public:
+//                        userProfile.setProfileType("PUBLIC");
+//                        break;
+//                }
+//            });
 
             findViewById(R.id.btn_change_user).setOnClickListener(v -> {
                 // get input from the user
@@ -161,6 +179,13 @@ public class EditProfilePageActivity extends AppCompatActivity {
                 userProfile.setFirstName(etFName.getText().toString());
                 userProfile.setLastName(etLName.getText().toString());
                 userProfile.setEmail(etEmail.getText().toString());
+
+                if(rbPrivate.isChecked()) {
+                    userProfile.setProfileType("PRIVATE");
+                }
+                else {
+                    userProfile.setProfileType("PUBLIC");
+                }
 
                 String userInterests = "";
 
@@ -176,7 +201,7 @@ public class EditProfilePageActivity extends AppCompatActivity {
                 // api call for adding in the Profile Service
                 Retrofit retrofit1 = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
                 IRegisterApi iRegisterApi = retrofit1.create(IRegisterApi.class);
-                Call<Profile> registerProfileResponse = iRegisterApi.changeUser(userProfile, userProfile.getUserId());
+                Call<Profile> registerProfileResponse = iRegisterApi.changeUser(userProfile, userProfile.getUserId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
                 registerProfileResponse.enqueue(new Callback<Profile>() {
                     @Override
                     public void onResponse(Call<Profile> call, Response<Profile> response) {
@@ -220,7 +245,7 @@ public class EditProfilePageActivity extends AppCompatActivity {
         //api call to for adding in the Search Service
         Retrofit retrofit2 = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IRegisterApi iRegisterInSearchApi = retrofit2.create(IRegisterApi.class);
-        Call<Profile> registerSearchResponse = iRegisterInSearchApi.changeUserInSearch(userProfile, myUser.getId());
+        Call<Profile> registerSearchResponse = iRegisterInSearchApi.changeUserInSearch(userProfile, myUser.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         registerSearchResponse.enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {

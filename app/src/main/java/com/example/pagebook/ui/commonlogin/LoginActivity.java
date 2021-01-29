@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.pagebook.R;
@@ -24,10 +23,24 @@ import retrofit2.Retrofit;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
+
+        // check if the user is already logged in
+        String authToken = sharedPreferences.getString("AuthToken","");
+
+        if(!authToken.equals(""))
+        {
+            // send the user to next page
+            goToNextPage();
+        }
 
         TextInputEditText etLoginEmail = findViewById(R.id.et_login_email);
         TextInputEditText etLoginPwd = findViewById(R.id.et_login_password);
@@ -46,39 +59,61 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseToken> call, Response<ResponseToken> response) {
                     if (response.body() != null) {
-//                        if (!response.body().getError().equals("Incorrect Username and Password")) {
+
+                        if (!response.body().getError().equals("Incorrect Username and Password")) {
+
+
                             SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("AuthToken", response.body().getData().getJwtToken());
 
+                            // save the auth token and user email to local storage
+
+                            editor.putString("AuthToken", response.body().getData().getJwtToken());
                             editor.putString("UserEmail", etLoginEmail.getText().toString());
                             editor.apply();
 
-                            Intent intent = new Intent(LoginActivity.this, AppRedirectActivity.class);
-                            startActivity(intent);
-                            finish();
-//                        }
-//                        else {
-//                            Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-//                            startActivity(intent);
-//                        }
+                            goToNextPage();
+
+
+
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+
+                            // user is not registered
+                            // go to registration page
+
+                            goToRegistrationPage();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseToken> call, Throwable t) {
                     Log.d("myTag", "onFailure in app re-direct");
+                    Toast.makeText(LoginActivity.this, "Check Your Internet Connection and Try again Later", Toast.LENGTH_SHORT).show();
 
                 }
             });
 
-            //TODO: api call to common infra for OAuth
         });
 
         findViewById(R.id.tv_sign_up).setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
             startActivity(intent);
         });
+    }
+
+
+    void goToRegistrationPage(){
+        Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    void goToNextPage(){
+        Intent intent = new Intent(LoginActivity.this, AppRedirectActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

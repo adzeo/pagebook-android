@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.search;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -68,7 +69,7 @@ public class SearchResultFragment extends Fragment implements SearchFriendsRecyc
     private void initApi(String searchFriendQuery) {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         ISearchFriendApi iSearchFriendApi = retrofit.create(ISearchFriendApi.class);
-        Call<List<SearchFriends>> responses = iSearchFriendApi.getSearchFriends(searchFriendQuery);
+        Call<List<SearchFriends>> responses = iSearchFriendApi.getSearchFriends(searchFriendQuery, getActivity().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<SearchFriends>>() {
             @Override
             public void onResponse (Call<List<SearchFriends>> call, retrofit2.Response<List<SearchFriends>> responseData) {

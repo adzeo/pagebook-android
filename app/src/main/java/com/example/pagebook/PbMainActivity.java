@@ -63,9 +63,9 @@ public class PbMainActivity extends AppCompatActivity implements BottomNavigatio
                 fragment = new SearchFragment();
                 break;
 
-            case R.id.bottom_navigation_notification:
-                fragment = new NotificationFragment();
-                break;
+//            case R.id.bottom_navigation_notification:
+//                fragment = new NotificationFragment();
+//                break;
 
             case R.id.bottom_navigation_business:
                 fragment = new BusinessFragment();
@@ -109,18 +109,21 @@ public class PbMainActivity extends AppCompatActivity implements BottomNavigatio
                 break;
 
             case R.id.action_app_logout:
-                UserBuilder.destroy();
+//                logoutApi();
 
+                UserBuilder.destroy();
                 SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("UserEmail", "");
+                editor.clear();
                 editor.apply();
 
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
-                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    private void logoutApi() {
+//    }
 }

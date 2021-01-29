@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PageBook.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.commonlogin.AppRedirectActivity"></activity>
+        <activity android:name=".ui.ads.SplashScreenAdActivity"></activity>
+        <activity android:name=".ui.commonlogin.AppRedirectActivity" />
         <activity android:name=".ui.commonlogin.RegistrationActivity" />
         <activity android:name=".ui.commonlogin.LoginActivity">
             <intent-filter>
@@ -40,8 +41,8 @@
         <activity android:name=".ui.fragments.business.BusinessRegistrationActivity" />
         <activity android:name=".ui.friendrequests.FriendRequestsActivity" />
         <activity android:name=".ui.stories.StoriesActivity" />
-        <activity android:name=".ui.fragments.profile.PbRegistrationActivity"/>
-        <activity android:name=".PbMainActivity"/>
+        <activity android:name=".ui.fragments.profile.PbRegistrationActivity" />
+        <activity android:name=".PbMainActivity" />
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -151,7 +152,7 @@ public class EditBusinessPageActivity extends AppCompatActivity {
             // api call for adding in the Profile Service
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IRegisterBusinessApi iRegisterBusinessApi = retrofit.create(IRegisterBusinessApi.class);
-            Call<BusinessProfile> registerBusinessResponse = iRegisterBusinessApi.changeBusiness(businessProfile, businessProfile.getId());
+            Call<BusinessProfile> registerBusinessResponse = iRegisterBusinessApi.changeBusiness(businessProfile, businessProfile.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             registerBusinessResponse.enqueue(new Callback<BusinessProfile>() {
                 @Override
                 public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {
@@ -180,7 +181,7 @@ public class EditBusinessPageActivity extends AppCompatActivity {
         //api call to for adding in the Search Service
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IRegisterBusinessApi iRegisterBusinessInSearchApi = retrofit.create(IRegisterBusinessApi.class);
-        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessInSearchApi.changeBusinessInSearch(savedBusinessProfile, savedBusinessProfile.getId());
+        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessInSearchApi.changeBusinessInSearch(savedBusinessProfile, savedBusinessProfile.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         registerSearchResponse.enqueue(new Callback<BusinessProfile>() {
             @Override
             public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {

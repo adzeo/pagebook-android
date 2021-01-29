@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.friendsprofile.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,10 +60,14 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
 
         // set the post content
         if(post.getPost().getFileType().equals("TEXT")) {
+            holder.tvPostText.setVisibility(View.VISIBLE);
             holder.tvPostText.setText(post.getPost().getFileURL());
+            holder.ivPostImage.setVisibility(View.GONE);
         }
         else if (post.getPost().getFileType().equals("IMAGE")){
+            holder.ivPostImage.setVisibility(View.VISIBLE);
             Glide.with(holder.ivPostImage.getContext()).load(post.getPost().getFileURL()).placeholder(R.drawable.loading_placeholder).into(holder.ivPostImage);
+            holder.tvPostText.setVisibility(View.GONE);
         }
 
         switch (post.getPerformedAction()) {
@@ -107,7 +112,7 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
 
         });
 
@@ -121,7 +126,7 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llHappyEmoji.setOnClickListener(v -> {
@@ -133,7 +138,7 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llSadEmoji.setOnClickListener(v -> {
@@ -145,7 +150,7 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
             holder.llHappyEmoji.setEnabled(false);
             holder.llSadEmoji.setEnabled(false);
 
-            initSetActionApi(postAction);
+            initSetActionApi(postAction, holder.rootView);
         });
 
         holder.llComments.setOnClickListener(v -> {
@@ -156,11 +161,11 @@ public class FriendsProfilePostsRecyclerViewAdapter extends RecyclerView.Adapter
         });
     }
 
-    private void initSetActionApi(PostAction postAction) {
+    private void initSetActionApi(PostAction postAction, View view) {
 
         Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
         IPostsApi iPostsApi = retrofit.create(IPostsApi.class);
-        Call<PostAction> responses = iPostsApi.postPostAction(postAction);
+        Call<PostAction> responses = iPostsApi.postPostAction(postAction, view.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<PostAction>() {
             @Override
             public void onResponse (Call<PostAction> call, retrofit2.Response<PostAction> responseData) {

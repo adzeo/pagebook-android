@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -140,7 +141,7 @@ public class BusinessRegistrationActivity extends AppCompatActivity {
             // api call for adding in the Business Service
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IRegisterBusinessApi iRegisterBusinessApi = retrofit.create(IRegisterBusinessApi.class);
-            Call<BusinessProfile> registerBusinessResponse = iRegisterBusinessApi.saveBusiness(businessProfile, myUser.getId());
+            Call<BusinessProfile> registerBusinessResponse = iRegisterBusinessApi.saveBusiness(businessProfile, myUser.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             registerBusinessResponse.enqueue(new Callback<BusinessProfile>() {
                 @Override
                 public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {
@@ -170,7 +171,7 @@ public class BusinessRegistrationActivity extends AppCompatActivity {
         IRegisterBusinessApi iRegisterBusinessSearchApi = retrofit.create(IRegisterBusinessApi.class);
 
         //api call to for adding in the Search Service
-        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessSearchApi.saveBusinessInSearch(savedBusinessProfile);
+        Call<BusinessProfile> registerSearchResponse = iRegisterBusinessSearchApi.saveBusinessInSearch(savedBusinessProfile, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         registerSearchResponse.enqueue(new Callback<BusinessProfile>() {
             @Override
             public void onResponse(Call<BusinessProfile> call, Response<BusinessProfile> response) {

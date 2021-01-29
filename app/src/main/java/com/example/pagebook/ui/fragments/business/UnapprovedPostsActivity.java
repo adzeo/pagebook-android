@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -45,7 +46,7 @@ public class UnapprovedPostsActivity extends AppCompatActivity {
     private void initApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-        Call<List<PostDTO>> responses = iBusinessProfileApi.getUnapprovedBusinessPosts(getIntent().getStringExtra("unapprovedPostsBusinessId"));
+        Call<List<PostDTO>> responses = iBusinessProfileApi.getUnapprovedBusinessPosts(getIntent().getStringExtra("unapprovedPostsBusinessId"), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<PostDTO>>() {
             @Override
             public void onResponse(Call<List<PostDTO>> call, retrofit2.Response<List<PostDTO>> responseData) {

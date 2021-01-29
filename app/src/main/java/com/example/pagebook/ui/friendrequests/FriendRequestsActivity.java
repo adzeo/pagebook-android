@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
     private void initApi() {
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IFriendRequestsApi iFriendRequestsApi = retrofit.create(IFriendRequestsApi.class);
-        Call<List<FriendRequests>> responses = iFriendRequestsApi.getFriendRequests(myUser.getId());
+        Call<List<FriendRequests>> responses = iFriendRequestsApi.getFriendRequests(myUser.getId(), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<FriendRequests>>() {
             @Override
             public void onResponse (Call<List<FriendRequests>> call, retrofit2.Response<List<FriendRequests>> responseData) {

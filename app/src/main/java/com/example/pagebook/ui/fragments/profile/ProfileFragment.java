@@ -79,6 +79,7 @@ public class ProfileFragment extends Fragment {
 
         view.findViewById(R.id.btn_my_add_posts).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), AddPostActivity.class);
+            intent.putExtra("business", "false");
             startActivity(intent);
         });
 
@@ -93,7 +94,7 @@ public class ProfileFragment extends Fragment {
         String loggedInEmail = sharedPreferences.getString("UserEmail", "");
 
         IAppLoginApi iAppLoginApi = retrofit.create(IAppLoginApi.class);
-        Call<Profile> getUserResponses = iAppLoginApi.checkUserByEmail(loggedInEmail);
+        Call<Profile> getUserResponses = iAppLoginApi.checkUserByEmail(loggedInEmail, getActivity().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         getUserResponses.enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
@@ -142,7 +143,7 @@ public class ProfileFragment extends Fragment {
         IPostsApi iPostsApi = retrofit.create(IPostsApi.class);
 
         // TODO: Implement Pagination
-        Call<List<PostDTO>> responses = iPostsApi.getUsersPosts(myUser.getId());
+        Call<List<PostDTO>> responses = iPostsApi.getUsersPosts(myUser.getId(), getActivity().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<PostDTO>>() {
             @Override
             public void onResponse (Call<List<PostDTO>> call, retrofit2.Response<List<PostDTO>> responseData) {

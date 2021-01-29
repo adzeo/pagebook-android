@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -68,6 +69,7 @@ public class AddPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_post);
 
         progressDialog = new ProgressDialog(this);
+
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_business_search);
         setSupportActionBar(toolbar);
@@ -195,7 +197,7 @@ public class AddPostActivity extends AppCompatActivity {
 
             Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IAddPostAPi iAddPostAPi = retrofit.create(IAddPostAPi.class);
-            Call<Post> responses = iAddPostAPi.addPost(post);
+            Call<Post> responses = iAddPostAPi.addPost(post, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Post>() {
                 @Override
                 public void onResponse(Call<Post> call, retrofit2.Response<Post> responseData) {

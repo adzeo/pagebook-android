@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.friendrequests.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,30 +58,30 @@ public class FriendRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         holder.btnAccept.setOnClickListener(v -> {
             mFriendRequestsDataList.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mFriendRequestsDataList.size());
-
-            holder.rootView.setVisibility(View.GONE);
-            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+//            notifyItemRangeChanged(position, mFriendRequestsDataList.size());
+//
+//            holder.rootView.setVisibility(View.GONE);
+//            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
 
             RespondFriendRequest friendObj = new RespondFriendRequest(myUser.getId(), friendRequest.getRequestorId());
 
             Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
             IFriendRequestsApi iFriendRequestsApi = retrofit.create(IFriendRequestsApi.class);
-            Call<Void> responses = iFriendRequestsApi.acceptRequest(friendObj);
-            responses.enqueue(new Callback<Void>() {
+            Call<List<RespondFriendRequest>> responses = iFriendRequestsApi.acceptRequest(friendObj, holder.rootView.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+            responses.enqueue(new Callback<List<RespondFriendRequest>>() {
                 @Override
-                public void onResponse (Call<Void> call, retrofit2.Response<Void> responseData) {
+                public void onResponse (Call<List<RespondFriendRequest>> call, retrofit2.Response<List<RespondFriendRequest>> responseData) {
 
                     if(responseData.body() != null) {
                         Toast.makeText(friendRequestsActivity, "Request Accepted", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        Toast.makeText(friendRequestsActivity, "Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(friendRequestsActivity, "Unable to Accept Friend Request", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
-                public void onFailure (Call<Void> call, Throwable t) {
+                public void onFailure (Call<List<RespondFriendRequest>> call, Throwable t) {
                     Toast.makeText(friendRequestsActivity, t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -89,16 +90,14 @@ public class FriendRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         holder.btnDecline.setOnClickListener(v -> {
             mFriendRequestsDataList.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mFriendRequestsDataList.size());
-
-            holder.rootView.setVisibility(View.GONE);
-            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-
-            RespondFriendRequest friendObj = new RespondFriendRequest(myUser.getId(), friendRequest.getRequestorId());
+//            notifyItemRangeChanged(position, mFriendRequestsDataList.size());
+//
+//            holder.rootView.setVisibility(View.GONE);
+//            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
 
             Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
             IFriendRequestsApi iFriendRequestsApi = retrofit.create(IFriendRequestsApi.class);
-            Call<Void> responses = iFriendRequestsApi.declineRequest(friendObj);
+            Call<Void> responses = iFriendRequestsApi.declineRequest(friendRequest.getRequestorId(), myUser.getId(), holder.rootView.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse (Call<Void> call, retrofit2.Response<Void> responseData) {
@@ -107,7 +106,7 @@ public class FriendRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                         Toast.makeText(friendRequestsActivity, "Request Declined", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        Toast.makeText(friendRequestsActivity, "Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(friendRequestsActivity, "Unable to Decline Friend Request", Toast.LENGTH_SHORT).show();
                     }
                 }
 

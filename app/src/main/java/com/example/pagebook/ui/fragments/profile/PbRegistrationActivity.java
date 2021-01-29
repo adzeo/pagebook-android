@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,7 +33,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,10 +44,18 @@ import retrofit2.Retrofit;
 
 public class PbRegistrationActivity extends AppCompatActivity {
 
-    Profile userProfile = new Profile();
+    Profile userProfile;
     private Uri filePath;
 
+    TextInputEditText etFName;
+    TextInputEditText etLName;
+    TextInputEditText etEmail;
+    RadioGroup rgProfileType;
+    ChipGroup cgInterests;
+    TextInputEditText etBio;
     ImageView ivProfile;
+    RadioButton rbPrivate;
+    RadioButton rbPublic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +63,28 @@ public class PbRegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pb_registration);
 
         //setting the values for the profile
+        etFName = findViewById(R.id.et_reg_fname);
+        etLName = findViewById(R.id.et_reg_lname);
+        etEmail = findViewById(R.id.et__reg_email);
+        rgProfileType = findViewById(R.id.radioGroup_reg_profile_type);
+        cgInterests = findViewById(R.id.chip_group_reg_interests);
+        etBio = findViewById(R.id.et_reg_bio);
         ivProfile = findViewById(R.id.iv_reg_pic);
+        rbPrivate = findViewById(R.id.rb_reg_private);
+        rbPublic = findViewById(R.id.rb_reg_public);
+
+        userProfile = new Profile();
+
+        List<String> myInterestList = Arrays.asList(getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("MyInterests", "").split(","));
+
+        int chipCount = cgInterests.getChildCount();
+
+        for (int i = 0; i < chipCount; i++) {
+            Chip selectedChip = (Chip) cgInterests.getChildAt(i);
+            if (myInterestList.contains(selectedChip.getText())) {
+                selectedChip.setChecked(true);
+            }
+        }
 
         findViewById(R.id.btn_choose_dp).setOnClickListener(v -> {
             Intent intent = new Intent();
@@ -97,27 +129,21 @@ public class PbRegistrationActivity extends AppCompatActivity {
             }
         });
 
-        TextInputEditText etFName = findViewById(R.id.et_reg_fname);
-        TextInputEditText etLName = findViewById(R.id.et_reg_lname);
-        TextInputEditText etEmail = findViewById(R.id.et__reg_email);
-        RadioGroup rgProfileType = findViewById(R.id.radioGroup_reg_profile_type);
-        ChipGroup cgInterests = findViewById(R.id.chip_group_reg_interests);
-        TextInputEditText etBio = findViewById(R.id.et_reg_bio);
-
         etEmail.setText(getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("UserEmail", ""));
-        userProfile.setProfileType("PUBLIC");
 
-        rgProfileType.setOnCheckedChangeListener((group, checkedId) -> {
-            switch (checkedId) {
-                case R.id.rb_reg_private:
-                    userProfile.setProfileType("PRIVATE");
-                    break;
-                case R.id.rb_reg_public:
-                    userProfile.setProfileType("PUBLIC");
-                    break;
-            }
-            Log.d("ProfileType",userProfile.getProfileType());
-        });
+//        userProfile.setProfileType("PUBLIC");
+
+//        rgProfileType.setOnCheckedChangeListener((group, checkedId) -> {
+//            switch (checkedId) {
+//                case R.id.rb_reg_private:
+//                    userProfile.setProfileType("PRIVATE");
+//                    break;
+//                case R.id.rb_reg_public:
+//                    userProfile.setProfileType("PUBLIC");
+//                    break;
+//            }
+//            Log.d("ProfileType",userProfile.getProfileType());
+//        });
 
         findViewById(R.id.btn_user_register).setOnClickListener(v -> {
             // get input from the user
@@ -125,10 +151,15 @@ public class PbRegistrationActivity extends AppCompatActivity {
             userProfile.setLastName(etLName.getText().toString());
             userProfile.setEmail(etEmail.getText().toString());
 
+            if(rbPrivate.isChecked()) {
+                userProfile.setProfileType("PRIVATE");
+            }
+            else {
+                userProfile.setProfileType("PUBLIC");
+            }
 
             String userInterests = "";
 
-            int chipCount = cgInterests.getChildCount();
             for (int i = 0; i < chipCount; i++) {
                 Chip selectedChip = (Chip) cgInterests.getChildAt(i);
                 if (selectedChip.isChecked()) {
@@ -138,23 +169,29 @@ public class PbRegistrationActivity extends AppCompatActivity {
             userProfile.setInterest(userInterests);
             userProfile.setBio(etBio.getText().toString());
 
-
             // api call for adding in the Profile Service
             Retrofit retrofit1 = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
             IRegisterApi iRegisterApi = retrofit1.create(IRegisterApi.class);
-            Call<Profile> registerProfileResponse = iRegisterApi.saveUser(userProfile);
+            Call<Profile> registerProfileResponse = iRegisterApi.saveUser(userProfile, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             registerProfileResponse.enqueue(new Callback<Profile>() {
                 @Override
                 public void onResponse(Call<Profile> call, Response<Profile> response) {
                     if (response.body() != null) {
                         Toast.makeText(PbRegistrationActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                         Profile savedProfile = response.body();
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("MyInterests");
+                        editor.apply();
+
                         initSaveUserInSearchApi(savedProfile);
 
                         //re-directing to PbMAinActivity for user feeds
                         Intent intent = new Intent(PbRegistrationActivity.this, PbMainActivity.class);
                         startActivity(intent);
-                    } else {
+                    }
+                    else {
                         Toast.makeText(PbRegistrationActivity.this, "Unable to Register the User", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -171,7 +208,7 @@ public class PbRegistrationActivity extends AppCompatActivity {
         //api call to for adding in the Search Service
         Retrofit retrofit2 = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         IRegisterApi iRegisterInSearchApi = retrofit2.create(IRegisterApi.class);
-        Call<Profile> registerSearchResponse = iRegisterInSearchApi.saveUserInSearch(savedProfile);
+        Call<Profile> registerSearchResponse = iRegisterInSearchApi.saveUserInSearch(savedProfile, getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         registerSearchResponse.enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {

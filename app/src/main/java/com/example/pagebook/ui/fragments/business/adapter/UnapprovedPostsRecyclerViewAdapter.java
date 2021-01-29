@@ -1,5 +1,6 @@
 package com.example.pagebook.ui.fragments.business.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,17 +67,17 @@ public class UnapprovedPostsRecyclerViewAdapter extends RecyclerView.Adapter<Una
         holder.btnApprove.setOnClickListener(v -> {
             mPostsDataList.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mPostsDataList.size());
+//            notifyItemRangeChanged(position, mPostsDataList.size());
 
-            holder.rootView.setVisibility(View.GONE);
-            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+//            holder.rootView.setVisibility(View.GONE);
+//            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
 
             Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
             IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-            Call<Post> responses = iBusinessProfileApi.updateApprovedPost(post.getPost().getPostId());
-            responses.enqueue(new Callback<Post>() {
+            Call<Integer> responses = iBusinessProfileApi.updateApprovedPost(post.getPost().getPostId(), holder.rootView.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+            responses.enqueue(new Callback<Integer>() {
                 @Override
-                public void onResponse (Call<Post> call, retrofit2.Response<Post> responseData) {
+                public void onResponse (Call<Integer> call, retrofit2.Response<Integer> responseData) {
 
                     if(responseData.body() != null) {
                         Toast.makeText(unapprovedPostsActivity, "Post Approved", Toast.LENGTH_SHORT).show();
@@ -87,7 +88,7 @@ public class UnapprovedPostsRecyclerViewAdapter extends RecyclerView.Adapter<Una
                 }
 
                 @Override
-                public void onFailure (Call<Post> call, Throwable t) {
+                public void onFailure (Call<Integer> call, Throwable t) {
                     Toast.makeText(unapprovedPostsActivity, t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -96,14 +97,14 @@ public class UnapprovedPostsRecyclerViewAdapter extends RecyclerView.Adapter<Una
         holder.btnReject.setOnClickListener(v -> {
             mPostsDataList.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, mPostsDataList.size());
-
-            holder.rootView.setVisibility(View.GONE);
-            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+//            notifyItemRangeChanged(position, mPostsDataList.size());
+//
+//            holder.rootView.setVisibility(View.GONE);
+//            holder.rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
 
             Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
             IBusinessProfileApi iBusinessProfileApi = retrofit.create(IBusinessProfileApi.class);
-            Call<Void> responses = iBusinessProfileApi.deleteUnapprovedPost(post.getPost().getPostId());
+            Call<Void> responses = iBusinessProfileApi.deleteUnapprovedPost(post.getPost().getPostId(), holder.rootView.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
             responses.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse (Call<Void> call, retrofit2.Response<Void> responseData) {

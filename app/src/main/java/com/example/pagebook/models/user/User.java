@@ -14,14 +14,6 @@ public class User {
     private String bio;
     private String id;
     private String email;
-    private List<String> friendsList;
-    private List<String> pagesFollowingList;
-
-
-    public User() {
-        this.friendsList = new ArrayList<>();
-        this.pagesFollowingList = new ArrayList<>();
-    }
 
     public String getImgUrl() {
         return imgUrl;
@@ -95,22 +87,6 @@ public class User {
         this.email = email;
     }
 
-    public List<String> getFriendsList() {
-        return friendsList;
-    }
-
-    public void setFriendsList(List<String> friendsList) {
-        this.friendsList = friendsList;
-    }
-
-    public List<String> getPagesFollowingList() {
-        return pagesFollowingList;
-    }
-
-    public void setPagesFollowingList(List<String> pagesFollowingList) {
-        this.pagesFollowingList = pagesFollowingList;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -123,8 +99,6 @@ public class User {
                 ", bio='" + bio + '\'' +
                 ", id='" + id + '\'' +
                 ", email='" + email + '\'' +
-                ", friendsList=" + friendsList +
-                ", pagesFollowingList=" + pagesFollowingList +
                 '}';
     }
 }

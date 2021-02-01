@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,6 +67,15 @@ public class ProfileFragment extends Fragment {
         myInterests = getView().findViewById(R.id.tv_profile_interests);
         myBio = getView().findViewById(R.id.tv_profile_bio);
         myTotalFriends = getView().findViewById(R.id.tv_total_friends);
+
+        final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.pullToRefreshProfileFrag);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initProfileApi();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         view.findViewById(R.id.btn_friend_list).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), FriendListActivity.class);

@@ -60,8 +60,9 @@ public class AddPostActivity extends AppCompatActivity {
     private Uri filePath;
 
     ImageView ivPost;
-    String fileUrl;
     private ProgressDialog progressDialog;
+
+    Post post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class AddPostActivity extends AppCompatActivity {
         TextInputEditText etTextPost = findViewById(R.id.et_post_text);
         ConstraintLayout ivLayout = findViewById(R.id.iv_post_layout);
         ivPost = findViewById(R.id.iv_post_img);
-        Button btnChoosePost = findViewById(R.id.btn_choose_post_img);
+//        Button btnChoosePost = findViewById(R.id.btn_choose_post_img);
         Button btnUploadPost = findViewById(R.id.btn_upload_post_img);
 
         postCategoryMenuList.add("Bollywood");
@@ -111,7 +112,7 @@ public class AddPostActivity extends AppCompatActivity {
         postType.setAdapter(arrayAdapterPostType);
         postType.setThreshold(1);
 
-        Post post = new Post();
+        post = new Post();
         post.setPostCategory(postCategory.getText().toString());
         post.setFileType(postType.getText().toString());
 
@@ -126,7 +127,7 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 post.setFileType(arrayAdapterPostType.getItem(position));
-                if (arrayAdapterPostType.getItem(position).equals("TEXT")) {
+                if (arrayAdapterPostType.getItem(position).equalsIgnoreCase("TEXT")) {
                     tvLayout.setVisibility(View.VISIBLE);
                     ivLayout.setVisibility(View.INVISIBLE);
                 } else {
@@ -136,61 +137,67 @@ public class AddPostActivity extends AppCompatActivity {
             }
         });
 
-        btnChoosePost.setOnClickListener(v -> {
+//        btnChoosePost.setOnClickListener(v -> {
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+//        });
+
+        btnUploadPost.setOnClickListener(v -> {
+
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
-        });
 
-        btnUploadPost.setOnClickListener(v -> {
-            if (filePath != null) {
-                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
-                progressDialog.show();
-                progressDialog.setCanceledOnTouchOutside(false);
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReference();
-                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
-                riversRef.putFile(filePath)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //if the upload is successful
-                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        Log.d("myTag", task.getResult().toString());
-                                        post.setFileURL(task.getResult().toString());
-                                        progressDialog.dismiss();
-                                    }
-                                });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                //if the upload is not successful
-                                //and displaying error message
-                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                                progressDialog.dismiss();
-                            }
-                        });
-            }
+//            if (filePath != null) {
+//                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+//                progressDialog.show();
+//                progressDialog.setCanceledOnTouchOutside(false);
+//                FirebaseStorage storage = FirebaseStorage.getInstance();
+//                StorageReference storageRef = storage.getReference();
+//                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+//                riversRef.putFile(filePath)
+//                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                //if the upload is successful
+//                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+//                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Uri> task) {
+//                                        Log.d("myTag", task.getResult().toString());
+//                                        post.setFileURL(task.getResult().toString());
+//                                        progressDialog.dismiss();
+//                                    }
+//                                });
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception exception) {
+//                                //if the upload is not successful
+//                                //and displaying error message
+//                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+//                                progressDialog.dismiss();
+//                            }
+//                        });
+//            }
             //if there is not any file
-            else {
-                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
-            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
+//            }
         });
 
         findViewById(R.id.btn_add_post).setOnClickListener(v -> {
             post.setUserId(myUser.getId());
             post.setProfileType(myUser.getProfileType());
-            if (post.getFileType().equals("TEXT")) {
+            if (post.getFileType().equalsIgnoreCase("TEXT")) {
                 post.setFileURL(etTextPost.getText().toString());
             }
 
-            if(getIntent().getStringExtra("business").equals("true")) {
+            if (getIntent().getStringExtra("business").equals("true")) {
                 post.setProfileType("BUSINESS");
                 post.setBusinessId(getIntent().getStringExtra("businessId"));
             }
@@ -204,7 +211,8 @@ public class AddPostActivity extends AppCompatActivity {
                     if (responseData.body() != null) {
                         Toast.makeText(AddPostActivity.this, "Post successfully uploaded", Toast.LENGTH_SHORT).show();
                         finish();
-                    } else {
+                    }
+                    else {
                         Toast.makeText(AddPostActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -230,6 +238,44 @@ public class AddPostActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (filePath != null) {
+            progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+            riversRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //if the upload is successful
+                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    Log.d("myTag", task.getResult().toString());
+                                    post.setFileURL(task.getResult().toString());
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //if the upload is not successful
+                            //and displaying error message
+                            Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+        }
+        //if there is not any file
+        else {
+            Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
         }
     }
 

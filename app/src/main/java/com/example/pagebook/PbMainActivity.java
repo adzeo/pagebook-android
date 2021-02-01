@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.bumptech.glide.Glide;
+import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.ui.commonlogin.LoginActivity;
 import com.example.pagebook.ui.fragments.business.BusinessFragment;
@@ -29,18 +31,37 @@ import com.example.pagebook.ui.fragments.profile.ProfileFragment;
 import com.example.pagebook.ui.fragments.search.SearchFragment;
 import com.example.pagebook.ui.friendrequests.FriendRequestsActivity;
 import com.example.pagebook.ui.stories.StoriesActivity;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class PbMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pb_main);
 
+
+
+        SharedPreferences sharedPreferences=getSharedPreferences("com.example.pagebook",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
+           String newToken=instanceIdResult.getToken();
+           editor.putString("FCMToken",newToken).apply();
+           editor.commit();
+            Log.e("newToken",newToken);
+        });
+
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_home_feed);
         setSupportActionBar(toolbar);
+
+//        FirebaseMessaging.getInstance().subscribeToTopic("common");
 
         //loading the default fragment
         loadFragment(new HomeFeedFragment());
@@ -63,9 +84,9 @@ public class PbMainActivity extends AppCompatActivity implements BottomNavigatio
                 fragment = new SearchFragment();
                 break;
 
-//            case R.id.bottom_navigation_notification:
-//                fragment = new NotificationFragment();
-//                break;
+            case R.id.bottom_navigation_notification:
+                fragment = new NotificationFragment();
+                break;
 
             case R.id.bottom_navigation_business:
                 fragment = new BusinessFragment();

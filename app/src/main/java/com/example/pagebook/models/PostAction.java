@@ -19,30 +19,30 @@ public class PostAction{
 	private String actionId;
 
 	@SerializedName("actionTime")
-	private Date actionTime;
+	private String actionTime;
 
-	public void setActionType(int actionType){
-		this.actionType = actionType;
-	}
-
-	public int getActionType(){
+	public int getActionType() {
 		return actionType;
 	}
 
-	public void setPostId(String postId){
-		this.postId = postId;
+	public void setActionType(int actionType) {
+		this.actionType = actionType;
 	}
 
-	public String getPostId(){
+	public String getPostId() {
 		return postId;
 	}
 
-	public void setUserId(String userId){
-		this.userId = userId;
+	public void setPostId(String postId) {
+		this.postId = postId;
 	}
 
-	public String getUserId(){
+	public String getUserId() {
 		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getActionId() {
@@ -53,11 +53,11 @@ public class PostAction{
 		this.actionId = actionId;
 	}
 
-	public Date getActionTime() {
+	public String getActionTime() {
 		return actionTime;
 	}
 
-	public void setActionTime(Date actionTime) {
+	public void setActionTime(String actionTime) {
 		this.actionTime = actionTime;
 	}
 }

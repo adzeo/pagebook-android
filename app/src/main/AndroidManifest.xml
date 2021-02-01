@@ -16,8 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PageBook.NoActionBar"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".ui.ads.SplashScreenAdActivity"></activity>
-        <activity android:name=".ui.commonlogin.AppRedirectActivity" />
+        <activity android:name=".ui.commonlogin.AppRedirectActivity">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.commonlogin.RegistrationActivity" />
         <activity android:name=".ui.commonlogin.LoginActivity">
             <intent-filter>

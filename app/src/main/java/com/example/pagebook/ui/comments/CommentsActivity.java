@@ -7,24 +7,33 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.pagebook.R;
 import com.example.pagebook.models.Comment;
 import com.example.pagebook.models.CommentDTO;
+import com.example.pagebook.models.PushNotificationRequest;
+import com.example.pagebook.models.PushNotificationResponse;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
+import com.example.pagebook.network.IPushNotificationApi;
+import com.example.pagebook.networkmanager.NotificationRetrofitBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
 import com.example.pagebook.ui.comments.adapter.CommentsRecyclerViewAdapter;
 import com.example.pagebook.ui.comments.network.ICommentsApi;
+import com.example.pagebook.ui.friendsprofile.FriendsProfileActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CommentsActivity extends AppCompatActivity {
@@ -67,6 +76,7 @@ public class CommentsActivity extends AppCompatActivity {
                         Toast.makeText(CommentsActivity.this, "Comment Saved", Toast.LENGTH_SHORT).show();
                         etComment.setText("");
                         initApi();
+                        initNotifApi();
                     }
                 }
 
@@ -81,12 +91,38 @@ public class CommentsActivity extends AppCompatActivity {
         initApi();
     }
 
+    private void initNotifApi() {
+        PushNotificationRequest notificationRequest=new PushNotificationRequest();
+        notificationRequest.setTitle("PageBook");
+        notificationRequest.setMessage(myUser.getFirstName()+" commented on your post.");
+//        notificationRequest.setTopic("batman");
+        notificationRequest.setTopic(getIntent().getStringExtra("postUserId"));
+        notificationRequest.setToken(getSharedPreferences("com.example.pagebook",Context.MODE_PRIVATE).getString("FCMToken",""));
+        Retrofit retrofit = NotificationRetrofitBuilder.getInstance();
+        IPushNotificationApi iPushNotificationApi = retrofit.create(IPushNotificationApi.class);
+        Map<String,String> data=new HashMap<>();
+        notificationRequest.setData(data);
+        Call<PushNotificationResponse> responseCall=iPushNotificationApi.sendNotification(notificationRequest,getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+        responseCall.enqueue(new Callback<PushNotificationResponse>() {
+            @Override
+            public void onResponse(Call<PushNotificationResponse> call, Response<PushNotificationResponse> response) {
+                if(response.body()!=null)
+                {
+                    Log.d("Notification Response",response.body().getMessage().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PushNotificationResponse> call, Throwable t) {
+
+                Log.d("Notification Response", t.getMessage());
+            }
+        });
+    }
+
     private void initApi() {
-        //api call for myFeedPosts
         Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
         ICommentsApi iCommentsApi = retrofit.create(ICommentsApi.class);
-
-        // TODO: Implement Pagination
         Call<List<CommentDTO>> responses = iCommentsApi.getPostComments(getIntent().getStringExtra("parentCommentId"), getIntent().getStringExtra("postId"), getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
         responses.enqueue(new Callback<List<CommentDTO>>() {
             @Override

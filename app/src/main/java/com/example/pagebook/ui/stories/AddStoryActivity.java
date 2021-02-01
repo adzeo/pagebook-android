@@ -66,54 +66,60 @@ public class AddStoryActivity extends AppCompatActivity {
         //setting the values for the profile
         ivStory = findViewById(R.id.iv_story_img);
 
-        findViewById(R.id.btn_choose_story_img).setOnClickListener(v -> {
+//        findViewById(R.id.btn_choose_story_img).setOnClickListener(v -> {
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+//        });
+
+        findViewById(R.id.btn_upload_story_img).setOnClickListener(v -> {
+
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
-        });
 
-        findViewById(R.id.btn_upload_story_img).setOnClickListener(v -> {
-            if (filePath != null) {
-                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
-                progressDialog.show();
-                progressDialog.setCanceledOnTouchOutside(false);
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReference();
-                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
-                riversRef.putFile(filePath)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //if the upload is successful
-                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        Log.d("myTag", task.getResult().toString());
-                                        userStory.setFileUrl(task.getResult().toString());
-                                        userStory.setUserId(myUser.getId());
-                                        userStory.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
-                                        userStory.setUserImageUrl(myUser.getImgUrl());
-                                        progressDialog.dismiss();
-                                    }
-                                });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                //if the upload is not successful
-                                //and displaying error message
-                                Toast.makeText(getApplicationContext(), "onFailure Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
-                                progressDialog.dismiss();
-                            }
-                        });
-            }
-            //if there is not any file
-            else {
-                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
-            }
+//            if (filePath != null) {
+//                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+//                progressDialog.show();
+//                progressDialog.setCanceledOnTouchOutside(false);
+//                FirebaseStorage storage = FirebaseStorage.getInstance();
+//                StorageReference storageRef = storage.getReference();
+//                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+//                riversRef.putFile(filePath)
+//                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                //if the upload is successful
+//                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+//                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Uri> task) {
+//                                        Log.d("myTag", task.getResult().toString());
+//                                        userStory.setFileUrl(task.getResult().toString());
+//                                        userStory.setUserId(myUser.getId());
+//                                        userStory.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
+//                                        userStory.setUserImageUrl(myUser.getImgUrl());
+//                                        progressDialog.dismiss();
+//                                    }
+//                                });
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception exception) {
+//                                //if the upload is not successful
+//                                //and displaying error message
+//                                Toast.makeText(getApplicationContext(), "onFailure Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+//                                progressDialog.dismiss();
+//                            }
+//                        });
+//            }
+//            //if there is not any file
+//            else {
+//                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
+//            }
         });
 
         findViewById(R.id.btn_add_story).setOnClickListener(v -> {
@@ -151,6 +157,47 @@ public class AddStoryActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (filePath != null) {
+            progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+            riversRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //if the upload is successful
+                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    Log.d("myTag", task.getResult().toString());
+                                    userStory.setFileUrl(task.getResult().toString());
+                                    userStory.setUserId(myUser.getId());
+                                    userStory.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
+                                    userStory.setUserImageUrl(myUser.getImgUrl());
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //if the upload is not successful
+                            //and displaying error message
+                            Toast.makeText(getApplicationContext(), "onFailure Error: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+        }
+        //if there is not any file
+        else {
+            Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
         }
     }
 

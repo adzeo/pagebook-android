@@ -15,6 +15,8 @@ import com.example.pagebook.networkmanager.RetrofitBuilder;
 import com.example.pagebook.ui.ads.SplashScreenAdActivity;
 import com.example.pagebook.ui.commonlogin.network.IAppLoginApi;
 import com.example.pagebook.ui.fragments.profile.PbRegistrationActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +29,20 @@ public class AppRedirectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_redirect);
+
+
+
+        SharedPreferences sharedPref = getSharedPreferences("com.example.pagebook",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
+            String newToken = instanceIdResult.getToken();
+            editor.putString("FCMToken", newToken).apply();
+            editor.commit();
+            Log.e("newToken",newToken);
+        });
+
+       FirebaseMessaging.getInstance().subscribeToTopic("batman");
 
         findViewById(R.id.btn_pagebook).setOnClickListener(v -> {
             SharedPreferences sharedPreferences = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
@@ -66,14 +82,6 @@ public class AppRedirectActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_quiz).setOnClickListener(v -> {
 
-        });
-
-        findViewById(R.id.tv_app_logout).setOnClickListener(v -> {
-            SharedPreferences sharedPref = getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("UserEmail", "");
-            editor.apply();
-            finish();
         });
     }
 }

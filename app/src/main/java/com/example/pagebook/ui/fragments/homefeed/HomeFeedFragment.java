@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.example.pagebook.ui.commonlogin.network.IAppLoginApi;
 import com.example.pagebook.ui.fragments.homefeed.adapter.HomeFeedRecyclerViewAdapter;
 import com.example.pagebook.models.PostDTO;
 import com.example.pagebook.ui.fragments.homefeed.network.IPostsApi;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class HomeFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home_feed, container, false);
+
         return view;
     }
 
@@ -48,9 +51,19 @@ public class HomeFeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.pullToRefreshHomeFeed);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initPostsApi();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
         if (myUser.getId() == null) {
             initProfileApi();
-        } else {
+        }
+        else {
             initPostsApi();
         }
     }
@@ -82,6 +95,8 @@ public class HomeFeedFragment extends Fragment {
                     } else {
                         myUser.setTotalFriends(response.body().getTotalFriends());
                     }
+
+                    FirebaseMessaging.getInstance().subscribeToTopic(myUser.getId());
 
                     initPostsApi();
                 }

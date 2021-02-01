@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pagebook.R;
+import com.example.pagebook.models.Post;
 import com.example.pagebook.models.PostAction;
 import com.example.pagebook.models.PostDTO;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
+import com.example.pagebook.ui.addposts.network.IAddPostAPi;
 import com.example.pagebook.ui.comments.CommentsActivity;
 import com.example.pagebook.ui.fragments.homefeed.network.IPostsApi;
 import com.example.pagebook.ui.fragments.profile.ProfileFragment;
@@ -59,12 +61,12 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
         holder.tvPostDate.setText(post.getPost().getUploadTime().toString());
 
         // set the post content
-        if(post.getPost().getFileType().equals("TEXT")) {
+        if(post.getPost().getFileType().equalsIgnoreCase("TEXT")) {
             holder.tvPostText.setVisibility(View.VISIBLE);
             holder.tvPostText.setText(post.getPost().getFileURL());
             holder.ivPostImage.setVisibility(View.GONE);
         }
-        else if (post.getPost().getFileType().equals("IMAGE")){
+        else if (post.getPost().getFileType().equalsIgnoreCase("IMAGE")){
             holder.ivPostImage.setVisibility(View.VISIBLE);
             Glide.with(holder.ivPostImage.getContext()).load(post.getPost().getFileURL()).placeholder(R.drawable.loading_placeholder).into(holder.ivPostImage);
             holder.tvPostText.setVisibility(View.GONE);
@@ -101,7 +103,6 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
         postAction.setUserId(myUser.getId());
         postAction.setActionType(0);
 
-        //TODO: call post api for action
         holder.llLikes.setOnClickListener(v -> {
             postAction.setActionType(1);
             holder.ivLikes.setImageResource(R.drawable.ic_like);
@@ -156,8 +157,39 @@ public class ProfileFeedRecyclerViewAdapter extends RecyclerView.Adapter<Profile
         holder.llComments.setOnClickListener(v -> {
             Intent intent = new Intent(profileFragment.getContext(), CommentsActivity.class);
             intent.putExtra("postId", post.getPost().getPostId());
+            intent.putExtra("postUserId", post.getPost().getUserId());
             intent.putExtra("parentCommentId", String.valueOf(1));
             holder.rootView.getContext().startActivity(intent);
+        });
+
+        holder.llShare.setOnClickListener(v -> {
+            Post sharePost = new Post();
+            sharePost.setUserId(myUser.getId());
+            sharePost.setProfileType(myUser.getProfileType());
+            sharePost.setPostCategory(post.getPost().getPostCategory());
+            sharePost.setFileType(post.getPost().getFileType());
+            sharePost.setFileURL(post.getPost().getFileURL());
+
+            if (post.getPost().getFileURL() != null) {
+                Retrofit retrofit = RetrofitBuilder.getInstance(String.valueOf(R.string.baseUrl));
+                IAddPostAPi iAddPostAPi = retrofit.create(IAddPostAPi.class);
+                Call<Post> responses = iAddPostAPi.addPost(sharePost, holder.rootView.getContext().getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+                responses.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, retrofit2.Response<Post> responseData) {
+                        if (responseData.body() != null) {
+                            Toast.makeText(profileFragment.getContext(), "Post Shared", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(profileFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+                        Toast.makeText(profileFragment.getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
 

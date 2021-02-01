@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,15 @@ public class BusinessFragment extends Fragment implements BusinessesFollowingRec
         view.findViewById(R.id.btn_follow_business).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), BusinessSearchActivity.class);
             startActivity(intent);
+        });
+
+        final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.pullToRefreshBusinessFrag);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initApi();
+                pullToRefresh.setRefreshing(false);
+            }
         });
 
         initApi();

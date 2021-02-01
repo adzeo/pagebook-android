@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,15 +19,22 @@ import com.bumptech.glide.Glide;
 import com.example.pagebook.R;
 import com.example.pagebook.models.PostDTO;
 import com.example.pagebook.models.Profile;
+import com.example.pagebook.models.PushNotificationRequest;
+import com.example.pagebook.models.PushNotificationResponse;
 import com.example.pagebook.models.SendFriendRequests;
 import com.example.pagebook.models.user.User;
 import com.example.pagebook.models.user.UserBuilder;
+import com.example.pagebook.network.IPushNotificationApi;
+import com.example.pagebook.networkmanager.MainRetrofitBuilder;
+import com.example.pagebook.networkmanager.NotificationRetrofitBuilder;
 import com.example.pagebook.networkmanager.RetrofitBuilder;
 import com.example.pagebook.ui.fragments.homefeed.network.IUserProfileApi;
 import com.example.pagebook.ui.friendsprofile.adapter.FriendsProfilePostsRecyclerViewAdapter;
 import com.example.pagebook.ui.friendsprofile.network.IFriendProfileApi;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,6 +69,15 @@ public class FriendsProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefreshFriendPage);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initApi();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
         friendImage = findViewById(R.id.iv_friend_dp);
         friendName = findViewById(R.id.tv_friend_profile_name);
         friendEmail = findViewById(R.id.tv_friend_profile_email);
@@ -70,7 +87,6 @@ public class FriendsProfileActivity extends AppCompatActivity {
 
         if (btnFollowFriend.isEnabled()) {
             btnFollowFriend.setOnClickListener(v -> {
-
                 SendFriendRequests friendRequest = new SendFriendRequests(myUser.getId(), getIntent().getStringExtra("friendUserId"));
 
                 Retrofit retrofit = RetrofitBuilder.getInstance(getString(R.string.baseUrl));
@@ -84,6 +100,7 @@ public class FriendsProfileActivity extends AppCompatActivity {
                             Toast.makeText(FriendsProfileActivity.this, "Friend Request Sent", Toast.LENGTH_SHORT).show();
                             btnFollowFriend.setText("Request Sent");
                             btnFollowFriend.setEnabled(false);
+                            initNotifApi();
                         } else {
                             Toast.makeText(FriendsProfileActivity.this, "Error", Toast.LENGTH_SHORT).show();
                         }
@@ -95,10 +112,39 @@ public class FriendsProfileActivity extends AppCompatActivity {
                     }
                 });
 
+
             });
         }
-
         initApi();
+    }
+
+    private void initNotifApi() {
+        PushNotificationRequest notificationRequest=new PushNotificationRequest();
+        notificationRequest.setTitle("PageBook");
+        notificationRequest.setMessage(myUser.getFirstName()+" sent you a Friend Request");
+//        notificationRequest.setTopic("batman");
+        notificationRequest.setTopic(getIntent().getStringExtra("friendUserId"));
+        notificationRequest.setToken(getSharedPreferences("com.example.pagebook",Context.MODE_PRIVATE).getString("FCMToken",""));
+        Retrofit retrofit = NotificationRetrofitBuilder.getInstance();
+        IPushNotificationApi iPushNotificationApi = retrofit.create(IPushNotificationApi.class);
+        Map<String,String> data=new HashMap<>();
+        notificationRequest.setData(data);
+        Call<PushNotificationResponse> responseCall=iPushNotificationApi.sendNotification(notificationRequest,getSharedPreferences("com.example.pagebook", Context.MODE_PRIVATE).getString("AuthToken", ""));
+        responseCall.enqueue(new Callback<PushNotificationResponse>() {
+            @Override
+            public void onResponse(Call<PushNotificationResponse> call, Response<PushNotificationResponse> response) {
+                if(response.body()!=null)
+                {
+                    Log.d("Notification Response",response.body().getMessage().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PushNotificationResponse> call, Throwable t) {
+
+                Log.d("Notification Response", t.getMessage());
+            }
+        });
     }
 
     private void initApi() {
@@ -153,7 +199,7 @@ public class FriendsProfileActivity extends AppCompatActivity {
                         btnFollowFriend.setEnabled(false);
                     }
 
-                    if (isFriend || friendProfileType.equals("PUBLIC")) {
+                    if (isFriend || friendProfileType.equalsIgnoreCase("PUBLIC")) {
                         initFriendsPostApi();
                     }
 

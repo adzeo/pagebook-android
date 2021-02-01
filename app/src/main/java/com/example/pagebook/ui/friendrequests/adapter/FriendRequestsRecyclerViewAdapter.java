@@ -101,18 +101,12 @@ public class FriendRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             responses.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse (Call<Void> call, retrofit2.Response<Void> responseData) {
-
-                    if(responseData.body() != null) {
-                        Toast.makeText(friendRequestsActivity, "Request Declined", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(friendRequestsActivity, "Unable to Decline Friend Request", Toast.LENGTH_SHORT).show();
-                    }
+                     Toast.makeText(friendRequestsActivity, "Request Declined", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure (Call<Void> call, Throwable t) {
-                    Toast.makeText(friendRequestsActivity, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(friendRequestsActivity, "Unable to Decline Friend Request", Toast.LENGTH_SHORT).show();
                 }
             });
         });

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pullToRefreshProfileFrag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.profile.ProfileFragment"
-    android:fillViewport="true">
+    tools:context=".ui.fragments.profile.ProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -173,7 +173,7 @@
             android:weightSum="3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_profile_bio" >
+            app:layout_constraintTop_toBottomOf="@+id/tv_profile_bio">
 
             <Button
                 android:id="@+id/btn_friend_list"
@@ -188,9 +188,9 @@
                 android:id="@+id/tv_total_friends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="Total Friends" />
 
         </LinearLayout>
@@ -221,9 +221,9 @@
             android:layout_marginTop="14dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:text="Add Post"
             android:minWidth="0dp"
             android:minHeight="0dp"
+            android:text="Add Post"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -260,4 +260,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

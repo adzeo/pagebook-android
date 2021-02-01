@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,11 +55,14 @@ public class EditBusinessPageActivity extends AppCompatActivity {
     private Uri filePath;
 
     ImageView ivBusinessProfile;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_business_page);
+
+        progressDialog = new ProgressDialog(this);
 
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_business_edit_profile);
@@ -100,46 +104,57 @@ public class EditBusinessPageActivity extends AppCompatActivity {
         businessProfile.setId(editBusinessPageRecord.getId());
         businessProfile.setImageUrl(editBusinessPageRecord.getImageUrl());
 
-        findViewById(R.id.btn_change_business_dp).setOnClickListener(v -> {
+//        findViewById(R.id.btn_change_business_dp).setOnClickListener(v -> {
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+//        });
+
+        findViewById(R.id.btn_upload_changed_business_dp).setOnClickListener(v -> {
+
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
-        });
 
-        findViewById(R.id.btn_upload_changed_business_dp).setOnClickListener(v -> {
-            if (filePath != null) {
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReference();
-                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
-                riversRef.putFile(filePath)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                //if the upload is successful
-                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        Log.d("myTag", task.getResult().toString());
-                                        businessProfile.setImageUrl(task.getResult().toString());
-                                    }
-                                });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                //if the upload is not successful
-                                //and displaying error message
-                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-            }
-            //if there is not any file
-            else {
-                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
-            }
+//            if (filePath != null) {
+//                progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+//                progressDialog.show();
+//                progressDialog.setCanceledOnTouchOutside(false);
+//                FirebaseStorage storage = FirebaseStorage.getInstance();
+//                StorageReference storageRef = storage.getReference();
+//                StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+//                riversRef.putFile(filePath)
+//                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                //if the upload is successful
+//                                Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+//                                riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Uri> task) {
+//                                        Log.d("myTag", task.getResult().toString());
+//                                        businessProfile.setImageUrl(task.getResult().toString());
+//                                        progressDialog.dismiss();
+//                                    }
+//                                });
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception exception) {
+//                                //if the upload is not successful
+//                                //and displaying error message
+//                                Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+//                                progressDialog.dismiss();
+//                            }
+//                        });
+//            }
+//            //if there is not any file
+//            else {
+//                Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
+//            }
         });
 
         findViewById(R.id.btn_change_business).setOnClickListener(v -> {
@@ -207,6 +222,44 @@ public class EditBusinessPageActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (filePath != null) {
+            progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+            riversRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //if the upload is successful
+                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    Log.d("myTag", task.getResult().toString());
+                                    businessProfile.setImageUrl(task.getResult().toString());
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //if the upload is not successful
+                            //and displaying error message
+                            Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+        }
+        //if there is not any file
+        else {
+            Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
         }
     }
 

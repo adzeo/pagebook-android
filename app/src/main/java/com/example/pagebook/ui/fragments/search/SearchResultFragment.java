@@ -52,7 +52,6 @@ public class SearchResultFragment extends Fragment implements SearchFriendsRecyc
 
     @Override
     public void onUserClick(SearchFriends searchFriends) {
-        //TODO: open the profile of the clicked user
         if(searchFriends.getId().equals(UserBuilder.getInstance().getId())) {
             getActivity().getSupportFragmentManager()
                     .beginTransaction()

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -63,12 +64,16 @@ public class EditProfilePageActivity extends AppCompatActivity {
     RadioButton rbPrivate;
     RadioButton rbPublic;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_page);
 
         userProfile = new Profile();
+
+        progressDialog = new ProgressDialog(this);
 
         //toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
@@ -98,7 +103,7 @@ public class EditProfilePageActivity extends AppCompatActivity {
 //            if(myUser.getProfileType() == null)
 //                myUser.setProfileType("PUBLIC");
 
-            if (myUser.getProfileType().equals("PRIVATE")) {
+            if (myUser.getProfileType().equalsIgnoreCase("PRIVATE")) {
                 rgProfileType.check(R.id.rb_change_reg_private);
             } else {
                 rgProfileType.check(R.id.rb_change_reg_public);
@@ -118,46 +123,58 @@ public class EditProfilePageActivity extends AppCompatActivity {
             //user changes recorded
             userProfile.setImgUrl(myUser.getImgUrl());
 
-            findViewById(R.id.btn_change_dp).setOnClickListener(v -> {
+//            findViewById(R.id.btn_change_dp).setOnClickListener(v -> {
+//                Intent intent = new Intent();
+//                intent.setType("image/*");
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
+//            });
+
+            findViewById(R.id.btn_upload_changed_dp).setOnClickListener(v -> {
+
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), 100);
-            });
 
-            findViewById(R.id.btn_upload_changed_dp).setOnClickListener(v -> {
-                if (filePath != null) {
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageRef = storage.getReference();
-                    StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
-                    riversRef.putFile(filePath)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    //if the upload is successful
-                                    Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-                                    riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Uri> task) {
-                                            Log.d("myTag", task.getResult().toString());
-                                            userProfile.setImgUrl(task.getResult().toString());
-                                        }
-                                    });
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    //if the upload is not successful
-                                    //and displaying error message
-                                    Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }
-                //if there is not any file
-                else {
-                    Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
-                }
+//                if (filePath != null) {
+//                    progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+//                    progressDialog.show();
+//                    progressDialog.setCanceledOnTouchOutside(false);
+//
+//                    FirebaseStorage storage = FirebaseStorage.getInstance();
+//                    StorageReference storageRef = storage.getReference();
+//                    StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+//                    riversRef.putFile(filePath)
+//                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                @Override
+//                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                    //if the upload is successful
+//                                    Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+//                                    riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Uri> task) {
+//                                            Log.d("myTag", task.getResult().toString());
+//                                            userProfile.setImgUrl(task.getResult().toString());
+//                                            progressDialog.dismiss();
+//                                        }
+//                                    });
+//                                }
+//                            })
+//                            .addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception exception) {
+//                                    //if the upload is not successful
+//                                    //and displaying error message
+//                                    Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+//                                    progressDialog.dismiss();
+//                                }
+//                            });
+//                }
+//                //if there is not any file
+//                else {
+//                    Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
+//                }
             });
 
 //            userProfile.setProfileType(myUser.getProfileType());
@@ -271,6 +288,45 @@ public class EditProfilePageActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (filePath != null) {
+            progressDialog.setMessage("Please Wait, Image is Getting Uploaded...");
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference riversRef = storageRef.child("images/" + new Date().toString() + ".jpg");
+            riversRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //if the upload is successful
+                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            riversRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    Log.d("myTag", task.getResult().toString());
+                                    userProfile.setImgUrl(task.getResult().toString());
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            //if the upload is not successful
+                            //and displaying error message
+                            Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+        }
+        //if there is not any file
+        else {
+            Toast.makeText(getApplicationContext(), "File Not Found", Toast.LENGTH_LONG).show();
         }
     }
 

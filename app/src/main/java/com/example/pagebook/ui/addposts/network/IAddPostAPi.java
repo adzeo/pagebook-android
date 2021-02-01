@@ -10,6 +10,6 @@ import retrofit2.http.POST;
 
 public interface IAddPostAPi {
 
-    @POST("post")
+    @POST("post/")
     Call<Post> addPost(@Body Post post, @Header("Authorization") String tokenKey);
 }

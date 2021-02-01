@@ -6,8 +6,10 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
 
 public interface INotificationApi {
-    @GET("")
-    Call<List<Notification>> getNotifications();
+    @GET("notification/getNotification/{userId}")
+    Call<List<Notification>> getNotifications(@Path("userId") String userId, @Header("Authorization") String tokenKey);
 }

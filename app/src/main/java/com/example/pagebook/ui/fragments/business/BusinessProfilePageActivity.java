@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +64,15 @@ public class BusinessProfilePageActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefreshBusinessPage);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initBusinessModeratorsApi();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         businessImage = findViewById(R.id.iv_business_dp);
         businessName = findViewById(R.id.tv_business_profile_name);

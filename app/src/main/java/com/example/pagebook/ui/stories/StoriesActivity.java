@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,15 @@ public class StoriesActivity extends AppCompatActivity implements StoriesRecycle
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        final SwipeRefreshLayout pullToRefresh = findViewById(R.id.pullToRefreshStoryFeed);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initApi();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         ivMyUser = findViewById(R.id.iv_my_story);
 
